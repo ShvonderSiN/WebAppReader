@@ -1,7 +1,7 @@
 import sys
 
 from PyQt6 import QtCore
-from PyQt6.QtGui import QIcon, QWindow, QAction
+from PyQt6.QtGui import QIcon, QWindow, QAction, QPalette, QColor
 from PyQt6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget, QMainWindow, QApplication, QLineEdit, QSystemTrayIcon, \
     QMenu, QLabel
 
@@ -93,55 +93,55 @@ class MainWindow(QMainWindow):
             self.tray_icon.show()
 
     def __style_ui(self):
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #2B2B2B; /* Темный фон, характерный для PyCharm */
-                color: #A9B7C6; /* Светло-серый текст */
-                font-family: Consolas; /* Шрифт, близкий к используемому в PyCharm */
-                font-size: 14px;
-            }
-
-            QPushButton {
-                background-color: #3C3F41; /* Темно-серая кнопка */
-                color: #A9B7C6; /* Светло-серый текст */
-                border: 1px solid #3C3F41;
-                border-radius: 4px;
-                padding: 5px;
-            }
-
-            QPushButton:hover {
-                background-color: #4C4F51; /* Чуть светлее при наведении */
-            }
-
-            QLabel {
-                color: #A9B7C6;
-            }
-
-            QCheckBox {
-                spacing: 5px;
-            }
-
-            QCheckBox::indicator {
-                width: 13px;
-                height: 13px;
-            }
-
-            # QCheckBox::indicator:checked {
-            #     image: url(:/icons/checkbox_checked);
-            # }
-            # 
-            # QCheckBox::indicator:unchecked {
-            #     image: url(:/icons/checkbox_unchecked);
-            # }
-
-            QToolTip {
-                background-color: #4C4F51; /* Темно-серый фон тултипов */
-                color: #A9B7C6; /* Светло-серый текст */
-                border: 1px solid #3C3F41;
-                border-radius: 3px;
-                opacity: 180;
-            }
-        """)
+        # self.setStyleSheet("""
+        #     QWidget {
+        #         background-color: #2B2B2B; /* Темный фон, характерный для PyCharm */
+        #         color: #A9B7C6; /* Светло-серый текст */
+        #         font-family: Consolas; /* Шрифт, близкий к используемому в PyCharm */
+        #         font-size: 14px;
+        #     }
+        #
+        #     QPushButton {
+        #         background-color: #3C3F41; /* Темно-серая кнопка */
+        #         color: #A9B7C6; /* Светло-серый текст */
+        #         border: 1px solid #3C3F41;
+        #         border-radius: 4px;
+        #         padding: 5px;
+        #     }
+        #
+        #     QPushButton:hover {
+        #         background-color: #4C4F51; /* Чуть светлее при наведении */
+        #     }
+        #
+        #     QLabel {
+        #         color: #A9B7C6;
+        #     }
+        #
+        #     QCheckBox {
+        #         spacing: 5px;
+        #     }
+        #
+        #     QCheckBox::indicator {
+        #         width: 13px;
+        #         height: 13px;
+        #     }
+        #
+        #     # QCheckBox::indicator:checked {
+        #     #     image: url(:/icons/checkbox_checked);
+        #     # }
+        #     #
+        #     # QCheckBox::indicator:unchecked {
+        #     #     image: url(:/icons/checkbox_unchecked);
+        #     # }
+        #
+        #     QToolTip {
+        #         background-color: #4C4F51; /* Темно-серый фон тултипов */
+        #         color: #A9B7C6; /* Светло-серый текст */
+        #         border: 1px solid #3C3F41;
+        #         border-radius: 3px;
+        #         opacity: 180;
+        #     }
+        # """)
 
         # Установка минимального размера окна
         if settings.contains('Window/minimumSize'):
@@ -159,8 +159,8 @@ class MainWindow(QMainWindow):
         if PLATFORM not in ['windows', 'linux']:
             self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
 
-        if PLATFORM not in ['windows', 'linux']:
-            self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        # if PLATFORM not in ['windows', 'linux']:
+        #     self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
             # self.title_bar = CustomTitleBar(parent=self, title='WebAppReader')
             # self.setMenuWidget(self.title_bar)
 
@@ -299,6 +299,25 @@ if __name__ == "__main__":
     startup()
 
     app = QApplication(sys.argv)
+    palette = QPalette()
+
+    palette.setColor(QPalette.ColorRole.Window, QColor('#2B2B2B'))  # Цвет фона окна
+    palette.setColor(QPalette.ColorRole.WindowText, QColor('#A9B7C6'))  # Цвет текста окна
+    palette.setColor(QPalette.ColorRole.Base, QColor('#1A1A1A'))  # Цвет фона для элементов ввода
+    palette.setColor(QPalette.ColorRole.AlternateBase,
+                     QColor('#2A2A2A'))  # Цвет фона для элементов ввода при чередовании
+    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor('#353535'))  # Цвет фона подсказок
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor('#A9B7C6'))  # Цвет текста подсказок
+
+    palette.setColor(QPalette.ColorRole.Text, QColor('#A9B7C6'))  # Цвет текста
+    palette.setColor(QPalette.ColorRole.Button, QColor('#3C3F41'))  # Цвет фона кнопок
+    palette.setColor(QPalette.ColorRole.ButtonText, QColor('#A9B7C6'))  # Цвет текста кнопок
+    palette.setColor(QPalette.ColorRole.BrightText, QColor('#FFFFFF'))  # Яркий цвет текста
+    palette.setColor(QPalette.ColorRole.Link, QColor('#859DD6'))  # Цвет ссылок
+    palette.setColor(QPalette.ColorRole.Highlight, QColor('#4C4F51'))  # Цвет подсветки
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor('#FFFFFF'))  # Цвет текста подсветки
+
+    app.setPalette(palette)
 
     main_window = MainWindow(APP_TITLE, APP_ICON)
     main_window.show()

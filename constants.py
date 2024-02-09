@@ -1,6 +1,5 @@
 import os
 import platform
-import subprocess
 
 from PyQt6.QtCore import QStandardPaths
 

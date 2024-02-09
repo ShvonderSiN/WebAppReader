@@ -1,10 +1,12 @@
 import threading
 import logging
+import subprocess
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QCheckBox, QFormLayout, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QCheckBox, QFormLayout, QPushButton, QFileDialog, \
+    QMessageBox
 from fake_headers import Headers
 
 from settings import settings
@@ -24,26 +26,44 @@ class DownloadThread(QThread):
     finished = pyqtSignal()
     update_info = pyqtSignal(str)
 
-    def __init__(self, command, parent=None):
+    def __init__(self, command, parent=None, base_path=None, url=None):
         super().__init__(parent=parent)
         self.parent = parent
         self.command = command
+        self.path_text = base_path
+        self.domain = get_domain(url).split('//')[-1]
 
-    @staticmethod
-    def _read_output(pipe, emit_signal):
-        for line in iter(pipe.readline, ''):
-            if "-- " in line:
-                file = line.split("/")[-1].strip()
-                if file:
-                    new_line = '.../' + file.split('?')[0].strip() + ' saved'
+    def _read_output(self, pipe, emit_signal):
+        count: int = 0
+        dots: str = ''
+        try:
+            for line in iter(pipe.readline, ''):
+                if " saved " in line.lower():
+                    count += 1
+                    message_line = f'saving files:  {count}'
+                elif "converting" in line.lower():
+                    message_line = f'converting links   {dots}'
+                    if len(dots) > 3:
+                        dots = ''
+                    else:
+                        dots += '.'
                 else:
                     continue
-                emit_signal.emit(new_line)
-        pipe.close()
+                emit_signal.emit(f'{self.domain}:   {message_line}')
+        except Exception as e:
+            logging.error(f"Error reading from stream: {e}")
+            emit_signal.emit("Error reading data")
 
     def run(self):
-        process = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1,
-                                   universal_newlines=True)
+        try:
+            process = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                       bufsize=1,
+                                       universal_newlines=True)
+        except Exception as e:
+            logging.error(f"Error starting the process: {e}")
+            self.update_info.emit("Error starting the process")
+            self.finished.emit()
+            return
 
         # Создание и запуск потоков для чтения stdout и stderr
         stdout_thread = threading.Thread(target=self._read_output, args=(process.stdout, self.update_info))
@@ -91,7 +111,7 @@ class DownloadPage(QWidget):
 
         self.path_line_edit = QLineEdit()
         self.path_line_edit.setFixedHeight(HEIGHT)
-        self.path_text = self.path_line_edit.text() or settings.value('Paths/download_path')
+        self.path_text = settings.value('Paths/download_path') or None
 
         if self.path_text:
             self.path_line_edit.setText(settings.value('Paths/download_path'))
@@ -125,7 +145,7 @@ class DownloadPage(QWidget):
             '--limit-rate=50K',
             '-p',
             '-E',
-            '-nc',
+            # '-nc',
             '--no-check-certificate',
         ]
 
@@ -142,9 +162,9 @@ class DownloadPage(QWidget):
         :return: a list of headers for the API request
         :rtype: list[str]
         """
-        headers = ["--header=" + key + ":" + value for key, value in Headers(headers=True).generate().items()]
-        headers.append("--header=Accept-Encoding:identity")
-        return headers
+        headers_list = ["--header=" + key + ": " + value for key, value in Headers(headers=True).generate().items()]
+        headers_list.append("--header=Accept-Encoding: identity")
+        return headers_list
 
     @property
     def no_parents(self) -> bool:
@@ -171,9 +191,9 @@ class DownloadPage(QWidget):
         self.url = self.url_line_edit.text()
         self.command = self.command_default.copy()
 
-        if self.parent():
+        if self.no_parents:
             self.command.insert(4, '--no-parent')
-        self.path_text = self.path_line_edit.text()
+        self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
         self.command.append('-P')
         self.command.append(self.path_text)
         self.command.append(self.url.lower())
@@ -181,7 +201,7 @@ class DownloadPage(QWidget):
 
         try:
             if has_internet_connection(self.url):
-                self.download_thread = DownloadThread(self.command, parent=self)
+                self.download_thread = DownloadThread(self.command, parent=self, base_path=self.path_text, url=self.url)
                 self.download_thread.finished.connect(self.download_finished)
                 self.download_thread.update_info.connect(self.update_download_info)
                 self.download_thread.start()
@@ -213,7 +233,7 @@ class DownloadPage(QWidget):
             None: This function does not return anything.
         """
         try:
-            message = f'{get_domain(self.command[-1]).split("//")[-1]} fully saved. ADD IT BY PRESS + BUTTON'
+            message = f'{get_domain(self.url)} fully saved. ADD IT BY PRESS + BUTTON'
         except IndexError:
             message = 'Download complete. ADD IT BY PRESS + BUTTON'
         self.main.lower_info_label.setText(message)
@@ -231,11 +251,18 @@ class DownloadPage(QWidget):
         Returns:
         None
         """
-        directory_from_settings = settings.value('Paths/download_path')
-        selected_directory = QFileDialog.getExistingDirectory(self, "Choose folder", directory_from_settings)
-        if selected_directory:
-            self.path_text = selected_directory
-            self.path_line_edit.setText(selected_directory)
-            settings.setValue('Paths/download_path', selected_directory)
-        else:
-            self.path_line_edit.setText(self.path_text)
+        try:
+            directory_from_settings = settings.value('Paths/download_path')
+            selected_directory = QFileDialog.getExistingDirectory(self, "Choose folder", directory_from_settings)
+            if selected_directory:
+                self.path_text = selected_directory
+                self.path_line_edit.setText(selected_directory)
+                settings.setValue('Paths/download_path', selected_directory)
+            else:
+                # self.path_line_edit.setText(self.path_text)
+                # Если пользователь отменил выбор, можно установить значение по умолчанию или оставить предыдущее
+                self.path_line_edit.setText(directory_from_settings)
+        except Exception as e:
+            logging.error(f"Error selecting download directory: {e}")
+            # Отображение сообщения об ошибке пользователю
+            QMessageBox.critical(self, "Error", "An error occurred while selecting the download directory.")

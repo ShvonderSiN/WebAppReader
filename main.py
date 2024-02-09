@@ -1,6 +1,7 @@
 import sys
 
 from PyQt6 import QtCore
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon, QWindow, QAction, QPalette, QColor
 from PyQt6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget, QMainWindow, QApplication, QLineEdit, QSystemTrayIcon, \
     QMenu, QLabel

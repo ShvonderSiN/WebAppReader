@@ -1,5 +1,3 @@
-Конечно, я могу перевести это на английский язык. Вот перевод:
-
 # WebAppReader
 
 WebAppReader is an application for downloading and viewing websites offline on different platforms using the PyQt6 framework.

@@ -1,22 +1,29 @@
 import sys
 
 from PyQt6 import QtCore
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QIcon, QWindow, QAction, QPalette, QColor
-from PyQt6.QtWidgets import QStackedWidget, QVBoxLayout, QWidget, QMainWindow, QApplication, QLineEdit, QSystemTrayIcon, \
-    QMenu, QLabel
+from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
+from PyQt6.QtWidgets import (
+    QApplication,
+    QLabel,
+    QMainWindow,
+    QMenu,
+    QStackedWidget,
+    QSystemTrayIcon,
+    QVBoxLayout,
+    QWidget,
+)
 
+from constants import *
 from database.database import startup
+from pages.add_edit_page import AddEditPage
 from pages.download_page import DownloadPage
+from pages.error_page import ErrorPage
+from pages.exit_page import ExitPage
 from pages.main_page import MainWidget
 from pages.new_category_page import NewCategory
+from settings import settings
 from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
-from pages.exit_page import ExitPage
-from pages.error_page import ErrorPage
-from pages.add_edit_page import AddEditPage
-from constants import *
-from settings import settings
 
 
 class MainWindow(QMainWindow):
@@ -71,26 +78,28 @@ class MainWindow(QMainWindow):
         # контекстное меню для иконки трея
         tray_menu = QMenu()
 
-        show_action = QAction('Show', self)
-        show_action.triggered.connect(lambda: print('Show'))
-        hide_action = QAction('Hide', self)
-        hide_action.triggered.connect(lambda: print('Hide'))
-        add_action = QAction('Add new source', self)
+        show_action = QAction("Show", self)
+        show_action.triggered.connect(lambda: print("Show"))
+        hide_action = QAction("Hide", self)
+        hide_action.triggered.connect(lambda: print("Hide"))
+        add_action = QAction("Add new source", self)
         add_action.triggered.connect(lambda: self.go_to(self.PAGES.ADD_EDIT_PAGE))
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(self.exit)
-        tray_menu.addActions((
-            # show_action,
-            # hide_action,
-            add_action,
-            tray_menu.addSeparator(),
-            exit_action
-        ))
+        tray_menu.addActions(
+            (
+                # show_action,
+                # hide_action,
+                add_action,
+                tray_menu.addSeparator(),
+                exit_action,
+            )
+        )
 
         # Устанавливаю контекстное меню для иконки трея
         self.tray_icon.setContextMenu(tray_menu)
 
-        if QSystemTrayIcon.isSystemTrayAvailable() and PLATFORM != 'android':
+        if QSystemTrayIcon.isSystemTrayAvailable() and PLATFORM != "android":
             self.tray_icon.show()
 
     def __style_ui(self):
@@ -145,25 +154,25 @@ class MainWindow(QMainWindow):
         # """)
 
         # Установка минимального размера окна
-        if settings.contains('Window/minimumSize'):
-            self.setMinimumSize(settings.value('Window/minimumSize'))
+        if settings.contains("Window/minimumSize"):
+            self.setMinimumSize(settings.value("Window/minimumSize"))
 
         # Восстановление геометрии окна
-        if settings.contains('Window/geometry_saved'):
-            self.restoreGeometry(settings.value('Window/geometry_saved'))
-        elif settings.contains('Window/geometry'):
-            self.setGeometry(settings.value('Window/geometry'))
+        if settings.contains("Window/geometry_saved"):
+            self.restoreGeometry(settings.value("Window/geometry_saved"))
+        elif settings.contains("Window/geometry"):
+            self.setGeometry(settings.value("Window/geometry"))
 
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon(os.path.join(BASE_DIR, SOURCES_FOLDER, self.icon)))
 
-        if PLATFORM not in ['windows', 'linux']:
+        if PLATFORM not in ["windows", "linux"]:
             self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
 
         # if PLATFORM not in ['windows', 'linux']:
         #     self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
-            # self.title_bar = CustomTitleBar(parent=self, title='WebAppReader')
-            # self.setMenuWidget(self.title_bar)
+        # self.title_bar = CustomTitleBar(parent=self, title='WebAppReader')
+        # self.setMenuWidget(self.title_bar)
 
     def __signals(self) -> None:
         self.exit_.exit_signal.connect(self.exit)
@@ -178,7 +187,9 @@ class MainWindow(QMainWindow):
     def stack_pages(self) -> None:
         self.main_widget = MainWidget(parent=self)  # Main widget page
         self.exit_ = ExitPage(parent=self, text="Are you sure you want to exit?")
-        self.error = ErrorPage(parent=self, text='Error')  # TODO прикрутить сюда варнинги
+        self.error = ErrorPage(
+            parent=self, text="Error"
+        )  # TODO прикрутить сюда варнинги
         self.add_edit_page = AddEditPage(parent=self)  # Add page
         self.new_category_page = NewCategory(parent=self)
 
@@ -187,7 +198,9 @@ class MainWindow(QMainWindow):
         self.PAGES.EXIT_PAGE = self.stacked_widget.addWidget(self.exit_)
         self.PAGES.ERROR_PAGE = self.stacked_widget.addWidget(self.error)
         self.PAGES.ADD_EDIT_PAGE = self.stacked_widget.addWidget(self.add_edit_page)
-        self.PAGES.NEW_CATEGORY_PAGE = self.stacked_widget.addWidget(self.new_category_page)
+        self.PAGES.NEW_CATEGORY_PAGE = self.stacked_widget.addWidget(
+            self.new_category_page
+        )
 
         self.download_page = DownloadPage(parent=self)
         self.PAGES.DOWNLOAD_PAGE = self.stacked_widget.addWidget(self.download_page)
@@ -213,7 +226,7 @@ class MainWindow(QMainWindow):
                 if isinstance(widget, RowWidget):
                     # Вызов метода для обновления текста с учетом новой ширины
                     widget.update_text_nameWidget(self.width())
-        settings.setValue('Window/geometry_saved', self.saveGeometry())
+        settings.setValue("Window/geometry_saved", self.saveGeometry())
 
     def closeEvent(self, event) -> None:
         """
@@ -232,10 +245,10 @@ class MainWindow(QMainWindow):
             event.ignore()
         else:
             # Accept the close event
-            settings.setValue('Window/geometry_saved', self.saveGeometry())
+            settings.setValue("Window/geometry_saved", self.saveGeometry())
             event.accept()
 
-    @QtCore.pyqtSlot(bool, name='on_top')
+    @QtCore.pyqtSlot(bool, name="on_top")
     def on_top(self, state: bool) -> None:
         self.CURRENT_PAGE = self.stacked_widget.currentIndex()
         """
@@ -251,7 +264,7 @@ class MainWindow(QMainWindow):
         # self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, True)
         self.show()
 
-    @QtCore.pyqtSlot(int, name='go_to')
+    @QtCore.pyqtSlot(int, name="go_to")
     def go_to(self, page: int | None = None) -> None:
         """
         Go to the specified page in the stacked widget.
@@ -262,12 +275,16 @@ class MainWindow(QMainWindow):
         self.CURRENT_PAGE = self.stacked_widget.currentIndex()
         if page is not None and page != self.CURRENT_PAGE:
             if page != self.PAGES.MAIN_PAGE or (
-                    page == self.PAGES.MAIN_PAGE and self.CURRENT_PAGE != self.PAGES.MAIN_PAGE):
+                page == self.PAGES.MAIN_PAGE
+                and self.CURRENT_PAGE != self.PAGES.MAIN_PAGE
+            ):
                 self.page_history.append(self.CURRENT_PAGE)
                 self.PREVIOUS_PAGE = self.CURRENT_PAGE
-        self.stacked_widget.setCurrentIndex(page if page is not None else self.PAGES.MAIN_PAGE)
+        self.stacked_widget.setCurrentIndex(
+            page if page is not None else self.PAGES.MAIN_PAGE
+        )
 
-    @QtCore.pyqtSlot(name='go_back')
+    @QtCore.pyqtSlot(name="go_back")
     def go_back(self) -> None:
         """Go back to the previous page."""
         self.CURRENT_PAGE = self.stacked_widget.currentIndex()
@@ -280,7 +297,7 @@ class MainWindow(QMainWindow):
             # No history available; revert to the main page or do nothing
             self.stacked_widget.setCurrentIndex(self.PAGES.MAIN_PAGE)
 
-    @QtCore.pyqtSlot(name='exit')
+    @QtCore.pyqtSlot(name="exit")
     def exit(self):
         self.confirm_exit = True
         self.close()
@@ -302,21 +319,36 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     palette = QPalette()
 
-    palette.setColor(QPalette.ColorRole.Window, QColor('#2B2B2B'))  # Цвет фона окна
-    palette.setColor(QPalette.ColorRole.WindowText, QColor('#A9B7C6'))  # Цвет текста окна
-    palette.setColor(QPalette.ColorRole.Base, QColor('#1A1A1A'))  # Цвет фона для элементов ввода
-    palette.setColor(QPalette.ColorRole.AlternateBase,
-                     QColor('#2A2A2A'))  # Цвет фона для элементов ввода при чередовании
-    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor('#353535'))  # Цвет фона подсказок
-    palette.setColor(QPalette.ColorRole.ToolTipText, QColor('#A9B7C6'))  # Цвет текста подсказок
+    palette.setColor(QPalette.ColorRole.Window, QColor("#2B2B2B"))  # Цвет фона окна
+    palette.setColor(
+        QPalette.ColorRole.WindowText, QColor("#A9B7C6")
+    )  # Цвет текста окна
+    palette.setColor(
+        QPalette.ColorRole.Base, QColor("#1A1A1A")
+    )  # Цвет фона для элементов ввода
+    palette.setColor(
+        QPalette.ColorRole.AlternateBase, QColor("#2A2A2A")
+    )  # Цвет фона для элементов ввода при чередовании
+    palette.setColor(
+        QPalette.ColorRole.ToolTipBase, QColor("#353535")
+    )  # Цвет фона подсказок
+    palette.setColor(
+        QPalette.ColorRole.ToolTipText, QColor("#A9B7C6")
+    )  # Цвет текста подсказок
 
-    palette.setColor(QPalette.ColorRole.Text, QColor('#A9B7C6'))  # Цвет текста
-    palette.setColor(QPalette.ColorRole.Button, QColor('#3C3F41'))  # Цвет фона кнопок
-    palette.setColor(QPalette.ColorRole.ButtonText, QColor('#A9B7C6'))  # Цвет текста кнопок
-    palette.setColor(QPalette.ColorRole.BrightText, QColor('#FFFFFF'))  # Яркий цвет текста
-    palette.setColor(QPalette.ColorRole.Link, QColor('#859DD6'))  # Цвет ссылок
-    palette.setColor(QPalette.ColorRole.Highlight, QColor('#4C4F51'))  # Цвет подсветки
-    palette.setColor(QPalette.ColorRole.HighlightedText, QColor('#FFFFFF'))  # Цвет текста подсветки
+    palette.setColor(QPalette.ColorRole.Text, QColor("#A9B7C6"))  # Цвет текста
+    palette.setColor(QPalette.ColorRole.Button, QColor("#3C3F41"))  # Цвет фона кнопок
+    palette.setColor(
+        QPalette.ColorRole.ButtonText, QColor("#A9B7C6")
+    )  # Цвет текста кнопок
+    palette.setColor(
+        QPalette.ColorRole.BrightText, QColor("#FFFFFF")
+    )  # Яркий цвет текста
+    palette.setColor(QPalette.ColorRole.Link, QColor("#859DD6"))  # Цвет ссылок
+    palette.setColor(QPalette.ColorRole.Highlight, QColor("#4C4F51"))  # Цвет подсветки
+    palette.setColor(
+        QPalette.ColorRole.HighlightedText, QColor("#FFFFFF")
+    )  # Цвет текста подсветки
 
     app.setPalette(palette)
 

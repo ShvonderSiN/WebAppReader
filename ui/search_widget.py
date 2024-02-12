@@ -1,6 +1,6 @@
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QPushButton
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QWidget
 
 from constants import *
 
@@ -31,8 +31,10 @@ class SearchWidget(QWidget):
         layout.addWidget(self.next_button)
 
         self.search_box = QLineEdit(self)
-        self.search_box.setPlaceholderText('START TYPING')
-        self.search_box.textChanged.connect(lambda: self.perform_search_signal.emit(self.search_box.text()))
+        self.search_box.setPlaceholderText("START TYPING")
+        self.search_box.textChanged.connect(
+            lambda: self.perform_search_signal.emit(self.search_box.text())
+        )
         layout.addWidget(self.search_box)
 
         layout.setStretch(2, 2)

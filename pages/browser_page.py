@@ -1,10 +1,10 @@
-from PyQt6 import QtCore
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QMenu
-from PyQt6.QtWebEngineWidgets import QWebEngineView
+import os
+import pathlib
 
-import pathlib, os
+from PyQt6 import QtCore
+from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
+from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
 from ui.browser_bottom_menu import BottomBrowserMenu
 
@@ -13,19 +13,27 @@ class MyWebEngineView(QWebEngineView):
 
     def contextMenuEvent(self, event):
         self.menu_position = event.globalPos()  # Сохраняем позицию клика
-        self.page().runJavaScript("document.activeElement.tagName", self.show_context_menu)
+        self.page().runJavaScript(
+            "document.activeElement.tagName", self.show_context_menu
+        )
 
     def show_context_menu(self, result):
         self.context_menu = QMenu(self)
 
         if self.page().selectedText():
-            self.context_menu.addAction(self.page().action(QWebEnginePage.WebAction.Copy))
+            self.context_menu.addAction(
+                self.page().action(QWebEnginePage.WebAction.Copy)
+            )
 
         if result == "A":
-            self.context_menu.addAction(self.page().action(QWebEnginePage.WebAction.CopyLinkToClipboard))
+            self.context_menu.addAction(
+                self.page().action(QWebEnginePage.WebAction.CopyLinkToClipboard)
+            )
 
         if not self.page().selectedText() and result != "A":
-            self.context_menu.addAction(self.page().action(QWebEnginePage.WebAction.Reload))
+            self.context_menu.addAction(
+                self.page().action(QWebEnginePage.WebAction.Reload)
+            )
 
         self.context_menu.exec(self.menu_position)
 
@@ -37,13 +45,17 @@ class Browser(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.url = ''
+        self.url = ""
         self.main_page = parent
 
         self.browser = MyWebEngineView(self)
         settings = self.browser.page().settings()
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
+        )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
+        )
         self.old_page = None
 
         layout = QVBoxLayout()
@@ -58,20 +70,24 @@ class Browser(QWidget):
     def __signals(self):
         self.bottom_menu.search_widget.next_search_signal.connect(self.find_next)
         self.bottom_menu.search_widget.previous_search_signal.connect(self.find_prev)
-        self.bottom_menu.search_widget.perform_search_signal.connect(self.perform_search)
+        self.bottom_menu.search_widget.perform_search_signal.connect(
+            self.perform_search
+        )
 
-    @QtCore.pyqtSlot(str, name='perform_search')
+    @QtCore.pyqtSlot(str, name="perform_search")
     def perform_search(self, text: str):
         self.browser.findText(text)
 
-
-    @QtCore.pyqtSlot(name='find_next')
+    @QtCore.pyqtSlot(name="find_next")
     def find_next(self):
         self.browser.findText(self.bottom_menu.search_widget.search_box.text())
 
-    @QtCore.pyqtSlot(name='find_prev')
+    @QtCore.pyqtSlot(name="find_prev")
     def find_prev(self):
-        self.browser.findText(self.bottom_menu.search_widget.search_box.text(), QWebEnginePage.FindFlag.FindBackward)
+        self.browser.findText(
+            self.bottom_menu.search_widget.search_box.text(),
+            QWebEnginePage.FindFlag.FindBackward,
+        )
 
     def set_url(self, url) -> None:
         new_page = QWebEnginePage(self.browser)
@@ -94,8 +110,11 @@ class Browser(QWidget):
         self.browser.setUrl(QtCore.QUrl(self.url))
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key.Key_F and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
+        if (
+            event.key() == QtCore.Qt.Key.Key_F
+            and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+        ):
             self.bottom_menu.search_box_activate()
 
     def __str__(self):
-        return 'browser'
+        return "browser"

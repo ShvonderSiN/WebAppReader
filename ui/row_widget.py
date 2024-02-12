@@ -1,17 +1,17 @@
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QSizePolicy
 
+from constants import *
 from database.queries import delete_website
 from ui.context_menu import ContextMenu
-from constants import *
-from tools import delete_icon, delete_data_from_website
 
 
 class RowWidget(QtWidgets.QGroupBox):
     """
     Класс RowWidget, как отьелтный виджет отрисовкиисточника из таблицы
     """
+
     double_click_signal = pyqtSignal(int)
     go_to_signal = pyqtSignal(int)
 
@@ -26,7 +26,7 @@ class RowWidget(QtWidgets.QGroupBox):
 
         h_box = QtWidgets.QHBoxLayout(self)
 
-        self.iconWidget = QtWidgets.QLabel('iconLabel')
+        self.iconWidget = QtWidgets.QLabel("iconLabel")
         h_box.addWidget(self.iconWidget)
         self.nameWidget = QtWidgets.QLabel(self.title)
         self.nameWidget.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
@@ -96,5 +96,7 @@ class RowWidget(QtWidgets.QGroupBox):
                 self.parent.show_all_websites()
 
     def update_text_nameWidget(self, width):
-        elided_text = self.fontMetrics().elidedText(self.title, QtCore.Qt.TextElideMode.ElideRight, width - 120)
+        elided_text = self.fontMetrics().elidedText(
+            self.title, QtCore.Qt.TextElideMode.ElideRight, width - 120
+        )
         self.nameWidget.setText(elided_text)

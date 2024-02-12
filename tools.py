@@ -1,10 +1,10 @@
+import re
 import shutil
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse, urljoin, urlunparse
-import re
-import requests
+from urllib.parse import urljoin, urlparse, urlunparse
 
+import requests
 from PyQt6.QtWidgets import QLineEdit
 from bs4 import BeautifulSoup
 from fake_headers import Headers
@@ -18,8 +18,14 @@ class Request:
         self.params = Headers().generate()
         self.session = requests.Session()
 
-    def get(self, url: str, pretty_html: bool = False, xmltodict=None, binary=False,
-            timeout=2) -> None | bytes | str | Any:
+    def get(
+        self,
+        url: str,
+        pretty_html: bool = False,
+        xmltodict=None,
+        binary=False,
+        timeout=2,
+    ) -> None | bytes | str | Any:
         """
         Для получения содержимого веб страниц и прочих данных
         :param proxies: {'https://': 'IP:port'}
@@ -30,27 +36,31 @@ class Request:
         try:
             response = self.session.get(url=url, params=self.params, timeout=timeout)
         except requests.Timeout:
-            raise TimeoutError(f'Запрос к {url} превысил установленный таймаут.', Request.__name__)
+            raise TimeoutError(
+                f"Запрос к {url} превысил установленный таймаут.", Request.__name__
+            )
 
         if response.status_code == 200:
             headers = response.headers
-            if 'json' in headers['Content-Type'].lower():
+            if "json" in headers["Content-Type"].lower():
                 return response.json(indent=4, ensure_ascii=False)
-            elif 'xml' in headers['Content-Type'].lower():
+            elif "xml" in headers["Content-Type"].lower():
                 return xmltodict.parse(response.content)
             elif binary or any(
-                    img_format in headers['Content-Type'] for img_format in ['image/jpeg', 'image/png', 'image/gif']):
+                img_format in headers["Content-Type"]
+                for img_format in ["image/jpeg", "image/png", "image/gif"]
+            ):
                 return response.content
             else:
                 if pretty_html:
-                    return BeautifulSoup(response.text, 'html5lib').prettify()
+                    return BeautifulSoup(response.text, "html5lib").prettify()
                 return response.text
         else:
-            print(f'Ответ сервера: {response.status_code}', Request.__name__)
+            print(f"Ответ сервера: {response.status_code}", Request.__name__)
             # sys.exit(0)
 
     def __repr__(self):
-        return f'Объект запроса класса Request'
+        return f"Объект запроса класса Request"
 
 
 def validate_url(url):
@@ -65,20 +75,20 @@ def validate_url(url):
     """
     try:
         result = urlparse(url)
-        if result.scheme in ('http', 'https'):
+        if result.scheme in ("http", "https"):
             return True
-        elif result.scheme == 'file' or result.scheme == '' or bool(Path(url).drive):
-            file_path = result.path if result.scheme == 'file' else url
+        elif result.scheme == "file" or result.scheme == "" or bool(Path(url).drive):
+            file_path = result.path if result.scheme == "file" else url
             if os.path.isfile(file_path):
                 file_extension = Path(file_path).suffix.lower()
-                supported_extensions = ['.html', '.htm']
+                supported_extensions = [".html", ".htm"]
                 if file_extension in supported_extensions:
                     return True
             return False
         else:
             return False
     except Exception as e:
-        print(f'Error {e}', validate_url.__name__)
+        print(f"Error {e}", validate_url.__name__)
         return False
 
 
@@ -94,7 +104,9 @@ def has_internet_connection(url="https://www.google.com"):
         response = requests.get(url, timeout=1)
         return True if response.status_code == 200 else False
     except requests.RequestException:
-        raise ConnectionError('No internet connection', has_internet_connection.__name__)
+        raise ConnectionError(
+            "No internet connection", has_internet_connection.__name__
+        )
 
 
 def is_html_source(source):
@@ -115,16 +127,16 @@ def is_html_source(source):
         return True
     else:
         _, ext = os.path.splitext(source)
-        return ext.lower() in ('.html', '.htm')
+        return ext.lower() in (".html", ".htm")
 
 
 def open_file(path: str) -> str | None:
     try:
-        with open(path, encoding='utf-8', newline='') as file:
+        with open(path, encoding="utf-8", newline="") as file:
             #  TODO добавить открытие pdf файлов и возможно картинок шрапгалок
             return file.read()
     except UnicodeDecodeError as er:
-        print(f'UnicodeDecodeError {str(er)} in function: {open_file.__name__}')
+        print(f"UnicodeDecodeError {str(er)} in function: {open_file.__name__}")
         return None
 
 
@@ -144,14 +156,21 @@ def get_domain(url):
 
 
 def delete_data_from_website(path: str) -> None:
-    if not path.startswith('http'):
+    if not path.startswith("http"):
         path_parts = path.split(os.sep)
         try:
             websites_index = path_parts.index(DATA_WEBSITES_FOLDER)
             domain_folder = path_parts[websites_index + 1]
-            folder_to_remove = os.path.join(BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER, domain_folder)
+            folder_to_remove = os.path.join(
+                BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER, domain_folder
+            )
             from database.database import session
-            db_site = session.query(Website).filter(Website.url.ilike(f"%{domain_folder}%")).first()
+
+            db_site = (
+                session.query(Website)
+                .filter(Website.url.ilike(f"%{domain_folder}%"))
+                .first()
+            )
 
             if not db_site and os.path.exists(folder_to_remove):
                 shutil.rmtree(folder_to_remove)
@@ -160,7 +179,7 @@ def delete_data_from_website(path: str) -> None:
 
 
 def get_new_title_icon(path) -> tuple:
-    """ Получаю введенный заголовок для вывода в окне добавления"""
+    """Получаю введенный заголовок для вывода в окне добавления"""
     local = os.path.isfile(path)
     if local:
         html = open_file(path)
@@ -170,18 +189,24 @@ def get_new_title_icon(path) -> tuple:
     try:
         soup = BeautifulSoup(html, "html5lib")
     except TypeError:
-        return '', os.path.join(BASE_DIR, SOURCES_FOLDER, NO_IMAGE)
+        return "", os.path.join(BASE_DIR, SOURCES_FOLDER, NO_IMAGE)
 
-    title = soup.title.string.strip() if soup.title else ''
-    title_result = re.sub(r"\s+", ' ', title).strip()
+    title = soup.title.string.strip() if soup.title else ""
+    title_result = re.sub(r"\s+", " ", title).strip()
 
     # Попробуем найти иконку в различных местах
-    icon_link = (soup.find('link', rel='apple-touch-icon') or
-                 soup.find('link', rel='icon') or
-                 soup.find('link', attrs={'rel': re.compile(r'(^|\s)icon(\s|$)')}) or
-                 soup.find('link', href='/favicon.ico'))
+    icon_link = (
+        soup.find("link", rel="apple-touch-icon")
+        or soup.find("link", rel="icon")
+        or soup.find("link", attrs={"rel": re.compile(r"(^|\s)icon(\s|$)")})
+        or soup.find("link", href="/favicon.ico")
+    )
 
-    icon_href = icon_link['href'] if icon_link and icon_link.has_attr('href') else '/favicon.ico'
+    icon_href = (
+        icon_link["href"]
+        if icon_link and icon_link.has_attr("href")
+        else "/favicon.ico"
+    )
     if local:
         # Формируем путь к иконке относительно пути к HTML файлу
         icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
@@ -189,7 +214,9 @@ def get_new_title_icon(path) -> tuple:
         # Проверяем, существует ли файл по данному пути
         if os.path.isfile(icon_path):
             return title_result, icon_path
-        return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(BASE_DIR, 'src', NO_IMAGE)
+        return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(
+            BASE_DIR, "src", NO_IMAGE
+        )
     else:
         base_url = path
         absolute_icon_url = urljoin(base_url, icon_href)
@@ -197,10 +224,13 @@ def get_new_title_icon(path) -> tuple:
         file_name = domain_name + os.path.basename(absolute_icon_url)
         req = Request()
         img = req.get(url=absolute_icon_url, binary=True, timeout=REQUEST_TIMEOUT_ICON)
-        with open(os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name), 'wb') as file:
+        with open(
+            os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name), "wb"
+        ) as file:
             file.write(img)
-            return title_result or domain_name.capitalize(), os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER,
-                                                                          file_name)
+            return title_result or domain_name.capitalize(), os.path.join(
+                BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name
+            )
 
 
 def widgets_value_cleaner(self, page: int):
@@ -222,8 +252,8 @@ def create_folders():
 
 
 def is_wayland() -> bool:
-    wayland_display = 'wayland-0'
+    wayland_display = "wayland-0"
 
-    if os.environ.get('WAYLAND_DISPLAY', None) == wayland_display:
+    if os.environ.get("WAYLAND_DISPLAY", None) == wayland_display:
         return True
     return False

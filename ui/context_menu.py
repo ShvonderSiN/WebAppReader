@@ -1,4 +1,4 @@
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtWidgets
 
 
 class ContextMenu(QtWidgets.QMenu):
@@ -9,7 +9,7 @@ class ContextMenu(QtWidgets.QMenu):
         # Создаем действия для контекстного меню в зависимости от контекста
         if context == "row_widget":
             self.editAct = self.addAction("EDIT")
-            self.deleteAct = self.addAction('DELETE')
+            self.deleteAct = self.addAction("DELETE")
             # self.openAct = self.addAction("Open for Context1")
         # elif context == "Context2":
         #     self.newAct = self.addAction("New for Context2")
@@ -19,6 +19,7 @@ class ContextMenu(QtWidgets.QMenu):
         # self.exitAct = self.addAction("Exit")
 
         # Подключаем действия к слотам (методам)
+
     #     self.editAct.triggered.connect(self.edit_method)
     #     self.deleteAct.triggered.connect(self.delete_method)
     #     # self.exitAct.triggered.connect(self.exit_method)

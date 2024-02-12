@@ -1,5 +1,4 @@
-from PyQt6 import QtWidgets, QtGui, QtCore
-import os
+from PyQt6 import QtWidgets
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QStyle
@@ -17,23 +16,31 @@ class CustomTitleBar(QtWidgets.QWidget):
 
         self.layout.setStretch(0, 1)
 
-        self.minimize_button = self.create_button('', QStyle.StandardPixmap.SP_TitleBarMinButton, parent.showMinimized)
+        self.minimize_button = self.create_button(
+            "", QStyle.StandardPixmap.SP_TitleBarMinButton, parent.showMinimized
+        )
         self.layout.addWidget(self.minimize_button)
 
-        self.maximize_button = self.create_button('', QStyle.StandardPixmap.SP_TitleBarMaxButton, self.toggle_maximize)
+        self.maximize_button = self.create_button(
+            "", QStyle.StandardPixmap.SP_TitleBarMaxButton, self.toggle_maximize
+        )
         self.layout.addWidget(self.maximize_button)
 
-        self.close_button = self.create_button('',
-                                               QStyle.StandardPixmap.SP_TitleBarCloseButton,
-                                               lambda: parent.stacked_widget.setCurrentIndex(parent.EXIT_PAGE))
+        self.close_button = self.create_button(
+            "",
+            QStyle.StandardPixmap.SP_TitleBarCloseButton,
+            lambda: parent.stacked_widget.setCurrentIndex(parent.EXIT_PAGE),
+        )
         self.layout.addWidget(self.close_button)
 
         # Стилизация
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
                     color: white; 
                     border: none;
                     font-size: 16px;
-                """)
+                """
+        )
         self.title.setStyleSheet("padding: 10px;")
 
         self.mousePressPosition = None
@@ -57,11 +64,15 @@ class CustomTitleBar(QtWidgets.QWidget):
             self.parent().showMaximized()
 
     def mousePressEvent(self, event):
-        self.mousePressPosition = event.globalPosition().toPoint() - self.parent().frameGeometry().topLeft()
+        self.mousePressPosition = (
+            event.globalPosition().toPoint() - self.parent().frameGeometry().topLeft()
+        )
 
     def mouseMoveEvent(self, event):
         if self.mousePressPosition:
-            self.parent().move(event.globalPosition().toPoint() - self.mousePressPosition)
+            self.parent().move(
+                event.globalPosition().toPoint() - self.mousePressPosition
+            )
 
     def mouseReleaseEvent(self, event):
         self.mousePressPosition = None

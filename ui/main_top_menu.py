@@ -1,7 +1,8 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QStyle, QSizePolicy, QPushButton, QSpacerItem, QCheckBox
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QSizePolicy, QPushButton, QSpacerItem, QCheckBox
 from constants import *
+from tools import is_wayland
 import os
 
 
@@ -49,7 +50,8 @@ class TopUi(QWidget):
                                                                     }}
                                                 """)
 
-            layout.addWidget(self.on_top_checkbox)
+            layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
+            # TODO следить за обновлениями pyqt6 может пофиксят
         # if CAN_DOWNLOAD is False:
         #     btn_download_site.hide()
 

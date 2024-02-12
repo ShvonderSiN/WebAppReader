@@ -12,10 +12,10 @@ settings = QSettings('WebAppReader', 'WebAppReader')
 settings.beginGroup("Window")
 # Установка размера окна по умолчанию, если он не задан
 if not settings.contains("minimumSize"):
-    settings.setValue("minimumSize", QSize(500, 900))
+    settings.setValue("minimumSize", QSize(450, 600))
 # Установка геометрии окна по умолчанию, если она не задана
 if not settings.contains('geometry'):
-    settings.setValue('geometry', QRect(250, 150, 600, 900))
+    settings.setValue('geometry', QRect(250, 150, 450, 600))
 settings.endGroup()
 
 

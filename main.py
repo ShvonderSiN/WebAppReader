@@ -245,9 +245,9 @@ class MainWindow(QMainWindow):
             state (bool): Whether the window should be on top or not.
         """
         if state:
-            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, state)
+            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, True)
         else:
-            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, state)
+            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, False)
         # self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, True)
         self.show()
 
@@ -322,4 +322,5 @@ if __name__ == "__main__":
 
     main_window = MainWindow(APP_TITLE, APP_ICON)
     main_window.show()
+
     sys.exit(app.exec())

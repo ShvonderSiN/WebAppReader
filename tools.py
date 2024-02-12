@@ -67,7 +67,7 @@ def validate_url(url):
         result = urlparse(url)
         if result.scheme in ('http', 'https'):
             return True
-        elif result.scheme == 'file' or result.scheme == '':
+        elif result.scheme == 'file' or result.scheme == '' or bool(Path(url).drive):
             file_path = result.path if result.scheme == 'file' else url
             if os.path.isfile(file_path):
                 file_extension = Path(file_path).suffix.lower()
@@ -219,3 +219,11 @@ def create_folders():
     #     os.mkdir(os.path.join(BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER))
     if not os.path.exists(APP_DATA_FOLDER):
         os.makedirs(APP_DATA_FOLDER)
+
+
+def is_wayland() -> bool:
+    wayland_display = 'wayland-0'
+
+    if os.environ.get('WAYLAND_DISPLAY', None) == wayland_display:
+        return True
+    return False

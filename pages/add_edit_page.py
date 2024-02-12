@@ -176,6 +176,7 @@ class AddEditPage(QWidget):
                                              options=QFileDialog.Option.ReadOnly,
                                              filter='Page (*.html *.htm)')[0]
         path = os.path.normpath(path) or None
+
         if path and os.path.isfile(path):
             self.path_line_edit.setText(path)
             title, self.icon = get_new_title_icon(path)

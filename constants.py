@@ -44,7 +44,7 @@ COPYRIGHTS = 'Shekin © 2024, WebAppReader. All rights reserved.'
 
 WGET = ''
 if PLATFORM == 'windows':
-    WGET = 'wget.exe'
+    WGET = os.path.join(BASE_DIR, SOURCES_FOLDER, 'wget.exe')
 elif PLATFORM == 'linux':
     WGET = 'wget'
 

@@ -26,6 +26,22 @@ from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
 
 
+def version_file():
+    import pyinstaller_versionfile
+
+    pyinstaller_versionfile.create_versionfile(
+        output_file="versionfile.txt",
+        version="1.0.0.0",
+        company_name="Sergei Shekin",
+        file_description="Multi-platform application reliable access to web content offline",
+        internal_name="WebAppReader",
+        legal_copyright="© Sergei Shekin. All rights reserved.",
+        original_filename="WebAppReader.exe",
+        product_name="WebAppReader",
+        translations=[0],
+    )
+
+
 class MainWindow(QMainWindow):
     """Главное окно"""
 
@@ -304,6 +320,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+
     # TODO Мобильный сделать без рамки
     # TODO Мобильный сделать без on_top
     # TODO Мобильный сделать кнопку закрытия программы
@@ -355,4 +372,5 @@ if __name__ == "__main__":
     main_window = MainWindow(APP_TITLE, APP_ICON)
     main_window.show()
 
+    # version_file()
     sys.exit(app.exec())

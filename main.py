@@ -30,7 +30,7 @@ def version_file():
     import pyinstaller_versionfile
 
     pyinstaller_versionfile.create_versionfile(
-        output_file="versionfile.txt",
+        output_file="version_file.txt",
         version="1.0.0.0",
         company_name="Sergei Shekin",
         file_description="Multi-platform application reliable access to web content offline",

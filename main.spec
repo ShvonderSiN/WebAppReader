@@ -35,7 +35,7 @@ exe = EXE(
     argv_emulation=False,
     entitlements_file=None,
     icon=['src/logo.ico'],
-    version='version_info.txt',
+    version='version_file.txt',
     codesign_identity="Sergei Shekin",
     target_arch='x64'
 )

@@ -18,5 +18,3 @@ SQLAlchemy==2.0.22
 typing_extensions
 urllib3==2.0.7
 webencodings==0.5.1
-pyinstaller
-pyinstaller_versionfile

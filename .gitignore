@@ -87,3 +87,4 @@ old.py
 versionfile.txt
 /manifest.json
 *.spec
+/compile/

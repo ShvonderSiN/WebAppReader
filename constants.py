@@ -1,20 +1,30 @@
 import os
 import platform
+import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-APP_ICON: str = "logo.png"
+if getattr(sys, "frozen", False):
+    # Если приложение запущено из исполняемого файла
+    BASE_DIR = sys._MEIPASS
+else:
+    # Если приложение запущено из исходного кода
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR: str = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+PLATFORM: str = platform.system().lower()
 APP_TITLE: str = "WebAppReader"
 APP_DATA_FOLDER: str = os.path.join(
     QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation),
     APP_TITLE,
 )
 ERROR_LOG = os.path.join(APP_DATA_FOLDER, "error_log.txt")
-BASE_DIR: str = str(os.path.join(os.path.abspath(os.path.dirname(__file__))))
-SOURCES_FOLDER: str = "src"
-DATA_FOLDER: str = "data"
+SOURCES_FOLDER: str = os.path.join(BASE_DIR, "src")
+APP_ICON: str = (
+    os.path.join(SOURCES_FOLDER, "logo.png")
+    if PLATFORM == "linux"
+    else os.path.join(SOURCES_FOLDER, "logo.ico")
+)
 DATA_WEBSITES_FOLDER: str = "websites"
-DATA_ICONS_FOLDER: str = "icons"
 HOME_DIRECTORY = QStandardPaths.writableLocation(
     QStandardPaths.StandardLocation.HomeLocation
 )
@@ -45,12 +55,11 @@ DOWN_ICON: str = "down.png"
 ADD_NEW_CATEGORY_TEXT = "Add new..."
 NO_CATEGORY_TEXT = "No category"
 
-PLATFORM: str = platform.system().lower()
-COPYRIGHTS = "Shekin © 2024, WebAppReader. All rights reserved."
+COPYRIGHTS = "Shekin © 2024, MintGuide.org. All rights reserved."
 
 WGET = ""
 if PLATFORM == "windows":
-    WGET = os.path.join(BASE_DIR, SOURCES_FOLDER, "wget.exe")
+    WGET = os.path.join(BASE_DIR, "wget.exe")
 elif PLATFORM == "linux":
     WGET = "wget"
 

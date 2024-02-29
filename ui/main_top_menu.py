@@ -1,5 +1,3 @@
-import os
-
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QPushButton, QSizePolicy, QSpacerItem, QWidget)

@@ -1,5 +1,3 @@
-import sys
-
 from PyQt6 import QtCore
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
 from PyQt6.QtWidgets import (
@@ -25,21 +23,26 @@ from settings import settings
 from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
 
+version = "1.0.0.1"
+
 
 def version_file():
     import pyinstaller_versionfile
 
-    pyinstaller_versionfile.create_versionfile(
-        output_file=os.path.join(BASE_DIR, 'compile', 'version_file.txt'),
-        version="1.0.0.0",
-        company_name="Sergei Shekin",
-        file_description="Multi-platform application reliable access to web content offline",
-        internal_name="WebAppReader",
-        legal_copyright="© Sergei Shekin. All rights reserved.",
-        original_filename="WebAppReader.exe",
-        product_name="WebAppReader",
-        translations=[0],
-    )
+    try:
+        pyinstaller_versionfile.create_versionfile(
+            output_file=os.path.join(BASE_DIR, "version_file.txt"),
+            version=version,
+            company_name="Sergei Shekin",
+            file_description="Offline web content reader",
+            internal_name="WebAppReader",
+            legal_copyright="© Sergei Shekin. All rights reserved.",
+            original_filename="webappreader.exe",
+            product_name="WebAppReader",
+            translations=[0],
+        )
+    except FileNotFoundError:
+        pass
 
 
 class MainWindow(QMainWindow):
@@ -331,6 +334,16 @@ if __name__ == "__main__":
     # TODO фокус на кнопку enter чтобы не мышкой нажимать
     # TODO сделать tooltips везде где это нужно
 
+    version_file()
+    if PLATFORM == "windows":
+        try:
+            from ctypes import windll  # Only exists on Windows.
+
+            myappid = f"org.mintguide.WebbAppReader.{version}"
+            windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except ImportError:
+            pass
+
     startup()
 
     app = QApplication(sys.argv)
@@ -372,5 +385,4 @@ if __name__ == "__main__":
     main_window = MainWindow(APP_TITLE, APP_ICON)
     main_window.show()
 
-    # version_file()
     sys.exit(app.exec())

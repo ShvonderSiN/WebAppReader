@@ -56,6 +56,10 @@ class Browser(QWidget):
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
         )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, False
+        )
+        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, False)
         self.old_page = None
 
         layout = QVBoxLayout()
@@ -103,6 +107,7 @@ class Browser(QWidget):
             self.url = path.as_uri()
             self.browser.setUrl(QtCore.QUrl(self.url))
         else:
+            self.url = url
             self.browser.setUrl(QtCore.QUrl(url))
         self.bottom_menu.search_box_activate(exit_=True)
 

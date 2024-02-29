@@ -57,6 +57,7 @@ class Request:
                 return response.text
         else:
             print(f"Ответ сервера: {response.status_code}", Request.__name__)
+            return None
             # sys.exit(0)
 
     def __repr__(self):

@@ -1,19 +1,21 @@
 import os
-import sqlalchemy
-from sqlalchemy.pool import StaticPool
-from sqlalchemy.orm import sessionmaker
-from database.models import Base, Category
 
-from constants import NO_CATEGORY_TEXT, APP_DATA_FOLDER
+from sqlalchemy import MetaData, create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from constants import APP_DATA_FOLDER, NO_CATEGORY_TEXT
+from database.models import Base, Category
 from tools import create_folders
+
 create_folders()
 __all__ = ['startup', 'session']
 
 DATABASE_URL = f"sqlite:///{os.path.join(APP_DATA_FOLDER, 'data.db')}"
 
-engine = sqlalchemy.create_engine(DATABASE_URL, poolclass=StaticPool,
+engine = create_engine(DATABASE_URL, poolclass=StaticPool,
                                   connect_args={"check_same_thread": False})
-metadata = sqlalchemy.MetaData()
+metadata = MetaData()
 SessionLocal = sessionmaker(bind=engine)
 session = SessionLocal()
 

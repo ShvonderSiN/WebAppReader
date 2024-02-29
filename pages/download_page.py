@@ -1,13 +1,23 @@
 import logging
 import subprocess
 import threading
+from typing import IO
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (QCheckBox, QFileDialog, QFormLayout, QLabel, QLineEdit, QMessageBox, QPushButton,
-                             QVBoxLayout, QWidget)
-from fake_headers import Headers
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QFileDialog,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+from fake_headers import Headers  # type: ignore
 
 from constants import *
 from settings import settings
@@ -33,7 +43,7 @@ class DownloadThread(QThread):
         self.path_text = base_path
         self.domain = get_domain(url).split("//")[-1]
 
-    def _read_output(self, pipe, emit_signal):
+    def _read_output(self, pipe: IO[str], emit_signal) -> None:
         count: int = 0
         dots: str = ""
         try:
@@ -56,6 +66,10 @@ class DownloadThread(QThread):
 
     def run(self):
         try:
+            if PLATFORM == "windows":
+                flag = subprocess.CREATE_NO_WINDOW
+            else:
+                flag = 0
             process = subprocess.Popen(
                 self.command,
                 stdout=subprocess.PIPE,
@@ -63,8 +77,9 @@ class DownloadThread(QThread):
                 text=True,
                 bufsize=1,
                 universal_newlines=True,
-                creationflags=subprocess.CREATE_NO_WINDOW,
+                creationflags=flag,
             )
+
         except Exception as e:
             logging.error(f"Error starting the process: {e}")
             self.update_info.emit("Error starting the process")

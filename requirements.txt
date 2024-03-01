@@ -13,15 +13,10 @@ mypy-extensions
 packaging
 pathspec
 platformdirs
-pyinstaller
-pyinstaller-hooks-contrib
-pyinstaller-versionfile
 PyQt6==6.4.2
 PyQt6-Qt6==6.4.2
 PyQt6-sip==13.4.1
 PyQt6-WebEngine==6.4
-PyQt6-WebEngine-Qt6==6.4.2
-#pyqtdarktheme
 PyYAML
 requests
 setuptools
@@ -31,4 +26,3 @@ SQLAlchemy
 typing_extensions
 urllib3
 webencodings
-#cx_Freeze

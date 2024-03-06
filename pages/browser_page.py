@@ -57,9 +57,10 @@ class Browser(QWidget):
             QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
         )
         settings.setAttribute(
-            QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, False
-        )
-        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, False)
+            QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True        )
+        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+
         self.old_page = None
 
         layout = QVBoxLayout()

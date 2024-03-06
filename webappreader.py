@@ -23,7 +23,7 @@ from settings import settings
 from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
 
-version = "1.0.0.1"
+version = "1.0.2"
 
 
 def version_file():
@@ -122,55 +122,6 @@ class MainWindow(QMainWindow):
             self.tray_icon.show()
 
     def __style_ui(self):
-        # self.setStyleSheet("""
-        #     QWidget {
-        #         background-color: #2B2B2B; /* Темный фон, характерный для PyCharm */
-        #         color: #A9B7C6; /* Светло-серый текст */
-        #         font-family: Consolas; /* Шрифт, близкий к используемому в PyCharm */
-        #         font-size: 14px;
-        #     }
-        #
-        #     QPushButton {
-        #         background-color: #3C3F41; /* Темно-серая кнопка */
-        #         color: #A9B7C6; /* Светло-серый текст */
-        #         border: 1px solid #3C3F41;
-        #         border-radius: 4px;
-        #         padding: 5px;
-        #     }
-        #
-        #     QPushButton:hover {
-        #         background-color: #4C4F51; /* Чуть светлее при наведении */
-        #     }
-        #
-        #     QLabel {
-        #         color: #A9B7C6;
-        #     }
-        #
-        #     QCheckBox {
-        #         spacing: 5px;
-        #     }
-        #
-        #     QCheckBox::indicator {
-        #         width: 13px;
-        #         height: 13px;
-        #     }
-        #
-        #     # QCheckBox::indicator:checked {
-        #     #     image: url(:/icons/checkbox_checked);
-        #     # }
-        #     #
-        #     # QCheckBox::indicator:unchecked {
-        #     #     image: url(:/icons/checkbox_unchecked);
-        #     # }
-        #
-        #     QToolTip {
-        #         background-color: #4C4F51; /* Темно-серый фон тултипов */
-        #         color: #A9B7C6; /* Светло-серый текст */
-        #         border: 1px solid #3C3F41;
-        #         border-radius: 3px;
-        #         opacity: 180;
-        #     }
-        # """)
 
         # Установка минимального размера окна
         if settings.contains("Window/minimumSize"):

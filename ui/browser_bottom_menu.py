@@ -13,10 +13,10 @@ class BottomMenu(QWidget):
         self.nav_layout.setContentsMargins(0, 0, 0, 0)
 
         if menu_type == "main_window":
-            self.create_button(CLOSE_ICON, parent.main.close, self.nav_layout)
+            self.create_button(CLOSE_ICON, parent.main.close, self.nav_layout, tooltip="CLOSE")
         else:
             self.create_button(
-                MENU_ICON, parent.main_page.close_browser, self.nav_layout
+                MENU_ICON, parent.main_page.close_browser, self.nav_layout, tooltip="BACK TO MAIN PAGE"
             )
 
             self.blank_widget = QWidget()
@@ -25,13 +25,12 @@ class BottomMenu(QWidget):
             self.nav_layout.addWidget(self.search_widget)
 
             self.search_button = self.create_button(
-                SEARCH_ICON, self.search_box_activate, self.nav_layout
+                SEARCH_ICON, self.search_box_activate, self.nav_layout, tooltip="SEARCH (CTRL + F)"
             )
-            self.search_button.setToolTip("CTRL + F")
-            self.create_button(BACK_ARROW_ICON, parent.browser.back, self.nav_layout)
-            self.create_button(HOME_ICON, parent.go_home, self.nav_layout)
+            self.create_button(BACK_ARROW_ICON, parent.browser.back, self.nav_layout, tooltip="BACKWARD")
+            self.create_button(HOME_ICON, parent.go_home, self.nav_layout, tooltip="GO HOME")
             self.create_button(
-                FORWARD_ARROW_ICON, parent.browser.forward, self.nav_layout
+                FORWARD_ARROW_ICON, parent.browser.forward, self.nav_layout, tooltip="FORWARD"
             )
 
             self.nav_layout.setStretch(1, 1)
@@ -41,9 +40,10 @@ class BottomMenu(QWidget):
                     EXIT_ICON, parent.main_page.main_window.close, self.nav_layout
                 )
 
-    def create_button(self, icon_name: str, callback, layout, flat=True) -> QPushButton:
+    def create_button(self, icon_name: str, callback, layout, flat=True, tooltip="") -> QPushButton:
         icon = QIcon(os.path.join(BASE_DIR, "src", icon_name))
         btn = QPushButton(self)
+        btn.setToolTip(tooltip)
         btn.setIcon(icon)
         btn.setFixedSize(30, 30)
         btn.setIconSize(btn.size())

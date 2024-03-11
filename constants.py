@@ -72,7 +72,7 @@ def get_wget() -> str | None:
 
 WGET = ""
 if PLATFORM == "windows":
-    WGET = os.path.join(BASE_DIR, "wget.exe")
+    WGET = os.path.join(BASE_DIR, "wget2.exe")
 elif PLATFORM == "linux":
     if get_wget() == "wget2":
         WGET = "wget2"

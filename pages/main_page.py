@@ -1,13 +1,12 @@
 from collections import defaultdict
 
 from PyQt6 import QtCore
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QVBoxLayout, QScrollArea, QWidget, QGroupBox, QToolBox, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import (QGroupBox, QScrollArea, QSizePolicy, QSpacerItem, QToolBox, QVBoxLayout, QWidget)
 
-from pages.browser_page import Browser
 from constants import *
 from database.queries import get_all_websites, get_single_website
+from pages.browser_page import Browser
 from tools import validate_url
 from ui.browser_bottom_menu import BottomMainMenu
 from ui.row_widget import RowWidget
@@ -28,7 +27,9 @@ class MainWidget(QWidget):
 
         self.scroll_area = QScrollArea(self)
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         self.scroll_widget = QWidget()
         self.scroll_layout = QVBoxLayout(self.scroll_widget)
 
@@ -37,7 +38,7 @@ class MainWidget(QWidget):
         self.scroll_area.setWidget(self.scroll_widget)
         self.layout.addWidget(self.scroll_area)
 
-        if PLATFORM not in ['windows', 'linux']:
+        if PLATFORM not in ["windows", "linux"]:
             bottom_menu = BottomMainMenu(parent=self)
             self.layout.addWidget(bottom_menu)
 
@@ -50,12 +51,22 @@ class MainWidget(QWidget):
     def create_website_row_widget(self, site):
         """Создает виджет строки для отдельного веб-сайта."""
         rowBox = RowWidget(id_site=site.id, title=site.title, parent=self)
-        rowBox.double_click_signal.connect(lambda id_site=site.id: self.open_browser(id_site))
+        rowBox.double_click_signal.connect(
+            lambda id_site=site.id: self.open_browser(id_site)
+        )
 
-        if not site.icon or not os.path.exists(os.path.join(BASE_DIR, SOURCES_FOLDER, site.icon)):
-            rowBox.iconWidget.setPixmap(QPixmap(os.path.join(BASE_DIR, SOURCES_FOLDER, NO_IMAGE)).scaled(40, 40))
+        if not site.icon or not os.path.exists(
+            os.path.join(BASE_DIR, SOURCES_FOLDER, site.icon)
+        ):
+            rowBox.iconWidget.setPixmap(
+                QPixmap(os.path.join(BASE_DIR, SOURCES_FOLDER, NO_IMAGE)).scaled(40, 40)
+            )
         else:
-            rowBox.iconWidget.setPixmap(QPixmap(os.path.join(BASE_DIR, SOURCES_FOLDER, site.icon)).scaled(40, 40))
+            rowBox.iconWidget.setPixmap(
+                QPixmap(os.path.join(BASE_DIR, SOURCES_FOLDER, site.icon)).scaled(
+                    40, 40
+                )
+            )
 
         return rowBox
 
@@ -71,7 +82,9 @@ class MainWidget(QWidget):
                 row_widget = self.create_website_row_widget(site)
                 catbox.layout().addWidget(row_widget)
 
-        spacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        spacer = QSpacerItem(
+            10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
         catbox.layout().addItem(spacer)
 
         return catbox
@@ -80,14 +93,16 @@ class MainWidget(QWidget):
         self.clear_layout(self.scroll_layout)
 
         toolbox = QToolBox()
-        toolbox.setStyleSheet("""
+        toolbox.setStyleSheet(
+            """
                     QToolBox::tab {
                         background-color: rgb(255, 255, 255);
                         color: rgb(0, 0, 0);
                         font-size: 16px;  
                         max-width: 100px;
                         font-weight: bold
-                    }""")
+                    }"""
+        )
         self.scroll_layout.addWidget(toolbox)
 
         db_websites = get_all_websites() or []
@@ -110,15 +125,19 @@ class MainWidget(QWidget):
 
             # выбираю (category_title, обеъект сайта -> sites_in_category.ID) сортирую
             sorted_categories = sorted(
-                websites_by_category.items(), key=lambda x: x[1][0].category.id, reverse=True
+                websites_by_category.items(),
+                key=lambda x: x[1][0].category.id,
+                reverse=True,
             )
 
             # Создаем бокс для каждой категории
             for category_title, sites_in_category in sorted_categories:
-                category_box = self.create_category_group_box(category_title.upper(), sites_in_category)
+                category_box = self.create_category_group_box(
+                    category_title.upper(), sites_in_category
+                )
                 toolbox.addItem(category_box, category_title.upper())
 
-    @QtCore.pyqtSlot(name='open_browser')
+    @QtCore.pyqtSlot(name="open_browser")
     def open_browser(self, site_id: int) -> None:
         """
         Open the browser and navigate to a specified website.
@@ -133,16 +152,16 @@ class MainWidget(QWidget):
         # тут надо проверить существует ли по пути локальному файл
         if not validate_url(url):
 
-            if PLATFORM == 'linux':
-                name = url.split('/')
-                new_name = '/' + '/'.join((name[-3], name[-2], name[-1]))
-            elif PLATFORM == 'windows':
-                name = url.split('\\')
-                new_name = '\\' + '\\'.join((name[-2], name[-1]))
+            if PLATFORM == "linux":
+                name = url.split("/")
+                new_name = "/" + "/".join((name[-3], name[-2], name[-1]))
+            elif PLATFORM == "windows":
+                name = url.split("\\")
+                new_name = "\\" + "\\".join((name[-2], name[-1]))
             else:
                 pass
             # new_name = '/' + '/'.join((name[-2], name[-1]))
-            self.main.lower_info_label.setText(f'Unable to open {new_name}')
+            self.main.lower_info_label.setText(f"Unable to open {new_name}")
 
         else:
             if self.browser is None:
@@ -161,4 +180,4 @@ class MainWidget(QWidget):
         self.browser.hide()
 
     def __str__(self):
-        return 'main_page'
+        return "main_page"

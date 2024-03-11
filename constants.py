@@ -1,5 +1,6 @@
 import os
 import platform
+import subprocess
 import sys
 
 from PyQt6.QtCore import QStandardPaths
@@ -57,11 +58,27 @@ NO_CATEGORY_TEXT = "No category"
 
 COPYRIGHTS = "Shekin © 2024, MintGuide.org. All rights reserved."
 
+
+def get_wget() -> str | None:
+    try:
+        check_wget = subprocess.run(["wget2", "-V"], stdout=subprocess.PIPE)
+        check_wget_output = check_wget.stdout.decode()
+        if "wget2" in check_wget_output.lower()[0:20]:
+            return "wget2"
+        return "wget"
+    except FileNotFoundError:
+        return None
+
+
 WGET = ""
 if PLATFORM == "windows":
     WGET = os.path.join(BASE_DIR, "wget.exe")
 elif PLATFORM == "linux":
-    WGET = "wget"
+    if get_wget() == "wget2":
+        WGET = "wget2"
+    else:
+        WGET = "wget"
+
 
 REQUEST_TIMEOUT_HTML: int = 3
 REQUEST_TIMEOUT_ICON: int = 3

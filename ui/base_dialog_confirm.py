@@ -3,21 +3,22 @@ import os
 from PyQt6 import QtCore
 from PyQt6.QtCore import QSize, pyqtSignal
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
-from constants import BASE_DIR, APPLY_ICON, CANCEL_ICON
+from constants import APPLY_ICON, BASE_DIR, CANCEL_ICON
 
 HEIGHT = 40
 WEIGHT = 70
+
 
 class BaseDialogConfirm(QWidget):
     yes_signal = pyqtSignal()
     no_signal = pyqtSignal()
 
-    def __init__(self, text='', parent=None):
+    def __init__(self, text="", parent=None):
         super().__init__(parent=parent)
         self.parent = parent
-        self.text = text.upper() or ''
+        self.text = text.upper() or ""
         self.layout = QVBoxLayout(self)
         self.layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
@@ -29,10 +30,12 @@ class BaseDialogConfirm(QWidget):
         self.button_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.layout.addLayout(self.button_layout)
 
-        self.apply_icon = QIcon(os.path.join(BASE_DIR, 'src', APPLY_ICON))
-        self.cancel_icon = QIcon(os.path.join(BASE_DIR, 'src', CANCEL_ICON))
+        self.apply_icon = QIcon(os.path.join(BASE_DIR, "src", APPLY_ICON))
+        self.cancel_icon = QIcon(os.path.join(BASE_DIR, "src", CANCEL_ICON))
         self.apply_button = QPushButton()
+        self.apply_button.setToolTip("Apply")
         self.cancel_button = QPushButton()
+        self.cancel_button.setToolTip("Cancel")
 
         self.layout.setSpacing(25)
 
@@ -53,7 +56,7 @@ class BaseDialogConfirm(QWidget):
         self.cancel_button.setDefault(True)
 
         self.button_layout.addWidget(self.apply_button)
-        self.hidden_label = QLabel('        ')
+        self.hidden_label = QLabel("        ")
         self.button_layout.addWidget(self.hidden_label)
         self.button_layout.addWidget(self.cancel_button)
 

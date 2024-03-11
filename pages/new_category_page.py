@@ -1,15 +1,8 @@
 from PyQt6 import QtGui
-from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QLabel, QFormLayout, QLineEdit, QPushButton, \
-    QDialogButtonBox
+from PyQt6.QtWidgets import QFormLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
 
 from constants import *
 from database.queries import add_new_category, get_categories
-from pages.add_edit_page import HEIGHT
-
-import os
-
 from ui.base_dialog_save import BaseDialogSave
 
 

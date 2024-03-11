@@ -2,7 +2,7 @@ import re
 import shutil
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 import requests
 from PyQt6.QtWidgets import QLineEdit
@@ -141,13 +141,13 @@ def open_file(path: str) -> str | None:
         return None
 
 
-def delete_icon(path: str) -> None:
-    path = str(path)
-    icon_name = os.path.basename(path)
-
-    icon_folder = os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, icon_name)
-    if icon_folder == path and os.path.exists(path):
-        os.remove(path)
+# def delete_icon(path: str) -> None:
+#     path = str(path)
+#     icon_name = os.path.basename(path)
+#
+#     icon_folder = os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, icon_name)
+#     if icon_folder == path and os.path.exists(path):
+#         os.remove(path)
 
 
 def get_domain(url):
@@ -156,27 +156,27 @@ def get_domain(url):
     return domain_url
 
 
-def delete_data_from_website(path: str) -> None:
-    if not path.startswith("http"):
-        path_parts = path.split(os.sep)
-        try:
-            websites_index = path_parts.index(DATA_WEBSITES_FOLDER)
-            domain_folder = path_parts[websites_index + 1]
-            folder_to_remove = os.path.join(
-                BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER, domain_folder
-            )
-            from database.database import session
-
-            db_site = (
-                session.query(Website)
-                .filter(Website.url.ilike(f"%{domain_folder}%"))
-                .first()
-            )
-
-            if not db_site and os.path.exists(folder_to_remove):
-                shutil.rmtree(folder_to_remove)
-        except ValueError:
-            pass
+# def delete_data_from_website(path: str) -> None:
+#     if not path.startswith("http"):
+#         path_parts = path.split(os.sep)
+#         try:
+#             websites_index = path_parts.index(DATA_WEBSITES_FOLDER)
+#             domain_folder = path_parts[websites_index + 1]
+#             folder_to_remove = os.path.join(
+#                 BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER, domain_folder
+#             )
+#             from database.database import session
+#
+#             db_site = (
+#                 session.query(Website)
+#                 .filter(Website.url.ilike(f"%{domain_folder}%"))
+#                 .first()
+#             )
+#
+#             if not db_site and os.path.exists(folder_to_remove):
+#                 shutil.rmtree(folder_to_remove)
+#         except ValueError:
+#             pass
 
 
 def get_new_title_icon(path) -> tuple:
@@ -208,30 +208,30 @@ def get_new_title_icon(path) -> tuple:
         if icon_link and icon_link.has_attr("href")
         else "/favicon.ico"
     )
-    if local:
-        # Формируем путь к иконке относительно пути к HTML файлу
-        icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
+    # if local:
+    # Формируем путь к иконке относительно пути к HTML файлу
+    icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
 
-        # Проверяем, существует ли файл по данному пути
-        if os.path.isfile(icon_path):
-            return title_result, icon_path
-        return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(
-            BASE_DIR, "src", NO_IMAGE
-        )
-    else:
-        base_url = path
-        absolute_icon_url = urljoin(base_url, icon_href)
-        domain_name = urlparse(absolute_icon_url).netloc
-        file_name = domain_name + os.path.basename(absolute_icon_url)
-        req = Request()
-        img = req.get(url=absolute_icon_url, binary=True, timeout=REQUEST_TIMEOUT_ICON)
-        with open(
-            os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name), "wb"
-        ) as file:
-            file.write(img)
-            return title_result or domain_name.capitalize(), os.path.join(
-                BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name
-            )
+    # Проверяем, существует ли файл по данному пути
+    if os.path.isfile(icon_path):
+        return title_result, icon_path
+    return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(
+        BASE_DIR, "src", NO_IMAGE
+    )
+    # else:
+    #     base_url = path
+    #     absolute_icon_url = urljoin(base_url, icon_href)
+    #     domain_name = urlparse(absolute_icon_url).netloc
+    #     file_name = domain_name + os.path.basename(absolute_icon_url)
+    #     req = Request()
+    #     img = req.get(url=absolute_icon_url, binary=True, timeout=REQUEST_TIMEOUT_ICON)
+    #     with open(
+    #         os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name), "wb"
+    #     ) as file:
+    #         file.write(img)
+    #         return title_result or domain_name.capitalize(), os.path.join(
+    #             BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name
+    #         )
 
 
 def widgets_value_cleaner(self, page: int):

@@ -1,6 +1,6 @@
 from PyQt6 import QtCore
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
 
 from ui.base_dialog_confirm import BaseDialogConfirm
 

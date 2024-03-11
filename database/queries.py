@@ -4,7 +4,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 
 from database.database import session
-from database.models import Website, Category
+from database.models import Category, Website
 
 NO_CATEGORY_ID = 1
 

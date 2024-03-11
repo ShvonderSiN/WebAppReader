@@ -1,6 +1,13 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (QCheckBox, QHBoxLayout, QPushButton, QSizePolicy, QSpacerItem, QWidget)
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QHBoxLayout,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QWidget,
+)
 
 from constants import *
 from tools import is_wayland
@@ -19,12 +26,14 @@ class TopUi(QWidget):
         self.PAGES = PagesConstants()
 
         btn_add_source = QPushButton()
+        btn_add_source.setToolTip("Add new source".upper())
         add_site_icon = QIcon(os.path.join(BASE_DIR, SOURCES_FOLDER, ADD_ICON))
         btn_add_source.clicked.connect(
             lambda: self.go_to_add_page_signal.emit(self.PAGES.ADD_EDIT_PAGE)
         )
 
         btn_download_site = QPushButton()
+        btn_download_site.setToolTip("Download new site".upper())
         download_site_icon = QIcon(
             os.path.join(BASE_DIR, SOURCES_FOLDER, DOWNLOAD_ICON)
         )

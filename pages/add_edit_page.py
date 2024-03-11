@@ -1,15 +1,24 @@
 from PyQt6 import QtCore
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QFormLayout,
-    QLabel, QFileDialog, QComboBox, QHBoxLayout)
+    QComboBox,
+    QFileDialog,
+    QFormLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
-from tools import *
 from database.queries import (
-    get_categories, submit_new_website, get_single_website,
-    update_single_website, delete_category)
-import os
-
+    delete_category,
+    get_categories,
+    get_single_website,
+    submit_new_website,
+    update_single_website,
+)
+from tools import *
 from ui.base_dialog_save import BaseDialogSave
 
 HEIGHT = 35
@@ -37,28 +46,30 @@ class AddEditPage(QWidget):
         self.file_btn.setIcon(open_file_icon)
         self.file_btn.setFlat(True)
         self.path_line_edit = QLineEdit()
-        self.path_line_edit.setPlaceholderText('<-- Select index.html or paste url link here')
+        self.path_line_edit.setPlaceholderText(
+            "<-- Select index.html or paste url link here"
+        )
         self.path_line_edit.setFixedHeight(HEIGHT)
 
         form_layout.addRow(self.file_btn, self.path_line_edit)
 
-        title_label = QLabel('TITLE')
+        title_label = QLabel("TITLE")
         title_label.setFixedHeight(HEIGHT)
         self.title_line_edit = QLineEdit()
         self.title_line_edit.setFixedHeight(HEIGHT)
-        self.title_line_edit.setPlaceholderText('Enter title here')
+        self.title_line_edit.setPlaceholderText("Enter title here")
         form_layout.addRow(title_label, self.title_line_edit)
 
-        icon_label = QLabel('ICON')
+        icon_label = QLabel("ICON")
         icon_label.setFixedHeight(HEIGHT)
         self.icon_btn = QPushButton()
-        self.default_icon = QIcon(os.path.join(BASE_DIR, 'src', NO_IMAGE))
+        self.default_icon = QIcon(os.path.join(BASE_DIR, "src", NO_IMAGE))
         self.icon_btn.setIcon(self.default_icon)
         self.icon_btn.setFixedSize(WEIGHT, HEIGHT)
         self.icon_btn.setIconSize(self.icon_btn.size())
         form_layout.addRow(icon_label, self.icon_btn)
 
-        category_label = QLabel('CATEGORY')
+        category_label = QLabel("CATEGORY")
         category_label.setFixedHeight(HEIGHT)
 
         # Создаем горизонтальный контейнер
@@ -69,10 +80,12 @@ class AddEditPage(QWidget):
         self.update_category_combo_box()
         hbox.addWidget(self.category_combo_box)  # Добавляем в контейнер
 
-        self.category_combo_box.currentIndexChanged.connect(self.on_category_combo_box_changed)
+        self.category_combo_box.currentIndexChanged.connect(
+            self.on_category_combo_box_changed
+        )
 
         self.remove_cat_btn = QPushButton()
-        del_cat_icon = QIcon(os.path.join(BASE_DIR, 'src', REMOVE_ICON))
+        del_cat_icon = QIcon(os.path.join(BASE_DIR, "src", REMOVE_ICON))
         self.remove_cat_btn.setIcon(del_cat_icon)
         self.remove_cat_btn.setFixedSize(WEIGHT, HEIGHT)
         self.remove_cat_btn.setIconSize(self.remove_cat_btn.size())
@@ -103,7 +116,10 @@ class AddEditPage(QWidget):
         box and updates the combo box with the latest categories.
         """
         text = self.category_combo_box.currentText()
-        if text.lower() != ADD_NEW_CATEGORY_TEXT.lower() and text.lower() != 'no category':
+        if (
+            text.lower() != ADD_NEW_CATEGORY_TEXT.lower()
+            and text.lower() != "no category"
+        ):
             delete_category(text.capitalize())
         self.update_category_combo_box()
 
@@ -120,11 +136,15 @@ class AddEditPage(QWidget):
                 self.icon_btn.setIcon(QIcon(site.icon))
                 self.icon = site.icon
             if site.category:
-                index = self.category_combo_box.findText(site.category.title.upper(), QtCore.Qt.MatchFlag.MatchExactly)
+                index = self.category_combo_box.findText(
+                    site.category.title.upper(), QtCore.Qt.MatchFlag.MatchExactly
+                )
                 self.category_combo_box.setCurrentIndex(index)
 
-        elif (self.main.PREVIOUS_PAGE != self.PAGES.NEW_CATEGORY_PAGE
-              and self.main.CURRENT_PAGE != self.PAGES.ADD_EDIT_PAGE):
+        elif (
+            self.main.PREVIOUS_PAGE != self.PAGES.NEW_CATEGORY_PAGE
+            and self.main.CURRENT_PAGE != self.PAGES.ADD_EDIT_PAGE
+        ):
 
             self.title_line_edit.clear()
             self.path_line_edit.clear()
@@ -165,16 +185,18 @@ class AddEditPage(QWidget):
         self.main.main_widget.show_all_websites()
         self.main.go_back()
 
-    @QtCore.pyqtSlot(name='file_dialog')
+    @QtCore.pyqtSlot(name="file_dialog")
     def new_website_dialog(self) -> None:
         """
         Display a file dialog to select an HTML file for a new website.
         """
-        path = QFileDialog().getOpenFileName(self,
-                                             caption='Select file',
-                                             directory='',
-                                             options=QFileDialog.Option.ReadOnly,
-                                             filter='Page (*.html *.htm)')[0]
+        path = QFileDialog().getOpenFileName(
+            self,
+            caption="Select file",
+            directory="",
+            options=QFileDialog.Option.ReadOnly,
+            filter="Page (*.html *.htm)",
+        )[0]
         path = os.path.normpath(path) or None
 
         if path and os.path.isfile(path):
@@ -182,23 +204,27 @@ class AddEditPage(QWidget):
             title, self.icon = get_new_title_icon(path)
             self.icon_btn.setIcon(QIcon(self.icon))
             self.title_line_edit.setText(title)
-            #  TODO делать фокус на кнопке потом на сейв
-            # self.dialog_box.setFocus()
+            self.dialog_box.save_button.setFocus()
 
-    @QtCore.pyqtSlot(name='icon_dialog')
+    @QtCore.pyqtSlot(name="icon_dialog")
     def new_icon_dialog(self) -> None:
         """
         Generates a new icon dialog for selecting an image file to be used as the application's icon.
         """
-        iconUrl = QFileDialog().getOpenFileName(self,
-                                                caption='Open file',
-                                                directory='',
-                                                filter='Image (*.png *.svg *.jpg *.ico *.gif *.tiff  *.webp)')[0]
+        iconUrl = QFileDialog().getOpenFileName(
+            self,
+            caption="Open file",
+            directory="",
+            filter="Image (*.png *.svg *.jpg *.ico *.gif *.tiff  *.webp)",
+        )[0]
         iconUrl = os.path.normpath(iconUrl) or None
         if iconUrl and os.path.isfile(iconUrl):
             pixmap = QPixmap(iconUrl)
-            scaled_pixmap = pixmap.scaled(self.icon_btn.size(), QtCore.Qt.AspectRatioMode.KeepAspectRatio,
-                                          QtCore.Qt.TransformationMode.SmoothTransformation)
+            scaled_pixmap = pixmap.scaled(
+                self.icon_btn.size(),
+                QtCore.Qt.AspectRatioMode.KeepAspectRatio,
+                QtCore.Qt.TransformationMode.SmoothTransformation,
+            )
             self.icon_btn.setIcon(QIcon(scaled_pixmap))
             self.icon = iconUrl
 
@@ -252,8 +278,10 @@ class AddEditPage(QWidget):
         if self.PAGES.EDIT_SITE_ID:
             update_single_website(
                 site_id=self.PAGES.EDIT_SITE_ID,
-                title=title, url=path,
-                category=category_text, icon=icon
+                title=title,
+                url=path,
+                category=category_text,
+                icon=icon,
             )
             self.PAGES.EDIT_SITE_ID = None
         else:

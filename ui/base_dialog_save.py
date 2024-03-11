@@ -1,7 +1,6 @@
 from PyQt6.QtCore import QSize
-from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QDialogButtonBox
 from PyQt6.QtGui import QIcon
-import os
+from PyQt6.QtWidgets import QDialogButtonBox, QPushButton, QVBoxLayout, QWidget
 
 from constants import *
 
@@ -18,8 +17,10 @@ class BaseDialogSave(QWidget):
         self.cancel_icon = QIcon(os.path.join(BASE_DIR, SOURCES_FOLDER, CANCEL_ICON))
 
         self.save_button = QPushButton()
+        self.save_button.setToolTip("Save")
         self.save_button.setFixedSize(QSize(WEIGHT, HEIGHT))
         self.cancel_button = QPushButton()
+        self.cancel_button.setToolTip("Cancel")
         self.cancel_button.setFixedSize(WEIGHT, HEIGHT)
         self.save_button.setIcon(self.yes_icon)
         self.save_button.setIconSize(self.save_button.size())
@@ -31,12 +32,13 @@ class BaseDialogSave(QWidget):
 
         self.dialog_box = QDialogButtonBox()
         self.dialog_box.setContentsMargins(30, 30, 30, 0)
-        self.dialog_box.addButton(self.save_button, QDialogButtonBox.ButtonRole.AcceptRole)
-        self.dialog_box.addButton(self.cancel_button, QDialogButtonBox.ButtonRole.RejectRole)
+        self.dialog_box.addButton(
+            self.save_button, QDialogButtonBox.ButtonRole.AcceptRole
+        )
+        self.dialog_box.addButton(
+            self.cancel_button, QDialogButtonBox.ButtonRole.RejectRole
+        )
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.dialog_box)
         self.setLayout(self.layout)
-
-
-

@@ -1,7 +1,6 @@
 from PyQt6 import QtCore
-from PyQt6.QtCore import QSize, pyqtSignal
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QMessageBox, QLabel, QPushButton, QHBoxLayout, QStyle, QSpacerItem, \
-    QSizePolicy
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
 
 from ui.base_dialog_confirm import BaseDialogConfirm
 
@@ -25,3 +24,6 @@ class ErrorPage(QWidget):
     @QtCore.pyqtSlot()
     def on_no_clicked(self):
         self.back_signal.emit()
+
+    def set_text(self, text):
+        self.text = text

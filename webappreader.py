@@ -23,7 +23,7 @@ from settings import settings
 from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
 
-version = "1.0.2"
+version = "1.1.0"
 
 
 def version_file():
@@ -214,6 +214,16 @@ class MainWindow(QMainWindow):
             # Ignore the close event
             event.ignore()
         else:
+            # Остановка всех активных потоков скачивания перед выходом
+            if self.download_page and hasattr(
+                self.download_page, "activeDownloadThreads"
+            ):
+                print("Trying to stop download threads...")
+                for thread in self.download_page.activeDownloadThreads:
+                    if thread.isRunning():
+                        thread.stop()
+                        thread.wait()
+                self.download_page.activeDownloadThreads.clear()
             # Accept the close event
             settings.setValue("Window/geometry_saved", self.saveGeometry())
             event.accept()
@@ -279,11 +289,6 @@ if __name__ == "__main__":
     # TODO Мобильный сделать без on_top
     # TODO Мобильный сделать кнопку закрытия программы
     # TODO Попробовать вынести в константы виджеты страниц stacks
-    # TODO добавить отдельный модуль сохранения вебсайта
-    # TODO сделать запоминание последнего пути локального
-    # TODO сделать запоминание страницы у каждого сайта
-    # TODO фокус на кнопку enter чтобы не мышкой нажимать
-    # TODO сделать tooltips везде где это нужно
 
     version_file()
     if PLATFORM == "windows":
@@ -333,7 +338,7 @@ if __name__ == "__main__":
 
     app.setPalette(palette)
 
-    main_window = MainWindow(APP_TITLE, APP_ICON)
+    main_window: MainWindow = MainWindow(APP_TITLE, APP_ICON)
     main_window.show()
 
     sys.exit(app.exec())

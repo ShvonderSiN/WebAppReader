@@ -9,12 +9,13 @@ from database.models import Base, Category
 from tools import create_folders
 
 create_folders()
-__all__ = ['startup', 'session']
+__all__ = ["startup", "session"]
 
 DATABASE_URL = f"sqlite:///{os.path.join(APP_DATA_FOLDER, 'data.db')}"
 
-engine = create_engine(DATABASE_URL, poolclass=StaticPool,
-                                  connect_args={"check_same_thread": False})
+engine = create_engine(
+    DATABASE_URL, poolclass=StaticPool, connect_args={"check_same_thread": False}
+)
 metadata = MetaData()
 SessionLocal = sessionmaker(bind=engine)
 session = SessionLocal()

@@ -30,14 +30,20 @@ WebAppReader — это приложение для загрузки и прос
     - Debian/Ubuntu:
        ```bash
        sudo apt-get update
+       sudo apt-get install wget2
+      # или
        sudo apt-get install wget
        ```
     - Fedora:
       ```bash
+      sudo dnf install wget2
+      # или
       sudo dnf install wget
       ```
     - Arch Linux:
       ```bash
+      sudo pacman -S wget2
+      # или
       sudo pacman -S wget
       ```
 2. Используйте приложение для загрузки и просмотра веб-сайтов.
@@ -87,14 +93,20 @@ Screenshots are provided at the beginning of the document.
     - Debian/Ubuntu:
        ```bash
        sudo apt-get update
+       sudo apt-get install wget2
+      # or
        sudo apt-get install wget
        ```
     - Fedora:
       ```bash
+      sudo dnf install wget2
+      # or
       sudo dnf install wget
       ```
     - Arch Linux:
       ```bash
+      sudo pacman -S wget2
+      # or
       sudo pacman -S wget
       ```
 2. Use the application to download and view websites.

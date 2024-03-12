@@ -1,5 +1,4 @@
 import re
-import shutil
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse, urlunparse
@@ -10,7 +9,6 @@ from bs4 import BeautifulSoup
 from fake_headers import Headers
 
 from constants import *
-from database.models import Website
 
 
 class Request:
@@ -58,7 +56,6 @@ class Request:
         else:
             print(f"Ответ сервера: {response.status_code}", Request.__name__)
             return None
-            # sys.exit(0)
 
     def __repr__(self):
         return f"Объект запроса класса Request"

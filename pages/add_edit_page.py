@@ -126,7 +126,6 @@ class AddEditPage(QWidget):
     def showEvent(self, event):
         """Override the showEvent method to return the default icon each time it is displayed."""
 
-        # print(self.parent.CURRENT_PAGE, self.PAGES.ADD_EDIT_PAGE)
         if self.PAGES.EDIT_SITE_ID:
             site = get_single_website(self.PAGES.EDIT_SITE_ID)
             self.path_line_edit.setText(site.url)

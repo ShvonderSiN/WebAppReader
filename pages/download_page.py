@@ -1,5 +1,6 @@
 import logging
 import threading
+from datetime import datetime
 from typing import IO
 
 from PyQt6 import QtCore
@@ -46,7 +47,6 @@ class DownloadThread(QThread):
     def _read_output(self, pipe: IO[str], emit_signal) -> None:
         count: int = 0
         dots: str = ""
-        total = "0"
         try:
             for line in iter(pipe.readline, ""):
                 if "saved" in line.lower() or "downloading" in line.lower():
@@ -185,29 +185,28 @@ class DownloadPage(QWidget):
         layout.addWidget(self.dialog_save)
         layout.addStretch(1)
         layout.setContentsMargins(30, 0, 30, 0)
-
         if get_wget() == "wget2":
             self.command_default = [
                 WGET,
                 "--recursive",
                 "--page-requisites",
                 "--level=7",
-                "--limit-rate=1000K",
+                "--limit-rate=1500K",
                 "--no-check-certificate",
                 "--force-directories",
                 "--restrict-file-names=windows",
                 "--adjust-extension",
                 "--convert-links",
-                "--wait=1",
                 "--random-wait",
             ]
+
         else:
             self.command_default = [
                 WGET,
                 "-r",
                 "-k",
                 "--level=7",
-                "--limit-rate=1000K",
+                "--limit-rate=1500K",
                 "-p",
                 "-E",
                 "--restrict-file-names=windows",
@@ -260,7 +259,7 @@ class DownloadPage(QWidget):
         self.url = self.url_line_edit.text()
         self.command = self.command_default.copy()
 
-        if self.no_parents:
+        if self.no_parents and get_wget() == "wget2":
             self.command.insert(4, "-np")
             self.command.remove("--page-requisites")
         self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
@@ -276,9 +275,10 @@ class DownloadPage(QWidget):
                 )
                 self.download_thread.finished.connect(self.download_finished)
                 self.download_thread.update_info.connect(self.update_download_info)
+                self.start_time = datetime.now()
                 self.download_thread.start()
         except ConnectionError:
-            self.main.lower_info_label.setText(f"Unable connect to {self.url}")
+            self.update_download_info(f"Unable connect to {self.url}")
         except Exception as e:
             logging.error(f"Error during download: {e}", exc_info=True)
             QMessageBox.information(
@@ -286,10 +286,9 @@ class DownloadPage(QWidget):
                 title="Information",
                 text=f"Error during download: \n{e}",
             )
-            self.main.lower_info_label.setText(f"Error: {e}")
+            self.update_download_info(f"Error: {e}")
 
         self.activeDownloadThreads.append(self.download_thread)
-
         self.main.go_to()
 
     def update_download_info(self, info: str = "") -> None:
@@ -316,7 +315,9 @@ class DownloadPage(QWidget):
             message = f"{get_domain(self.url)} fully saved. ADD IT BY PRESS + BUTTON"
         except IndexError:
             message = "Download complete. ADD IT BY PRESS + BUTTON"
-        self.main.lower_info_label.setText(message)
+        if (datetime.now() - self.start_time).total_seconds() < 1:
+            message = f"{get_domain(self.url)} may have rejected the connection, check the downloaded files."
+        self.update_download_info(message)
         self.main.main_widget.show_all_websites()
         if self.activeDownloadThreads:
             self.activeDownloadThreads.remove(self.download_thread)

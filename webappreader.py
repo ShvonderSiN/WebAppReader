@@ -1,4 +1,5 @@
 from PyQt6 import QtCore
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
@@ -218,7 +219,6 @@ class MainWindow(QMainWindow):
             if self.download_page and hasattr(
                 self.download_page, "activeDownloadThreads"
             ):
-                print("Trying to stop download threads...")
                 for thread in self.download_page.activeDownloadThreads:
                     if thread.isRunning():
                         thread.stop()
@@ -290,7 +290,9 @@ if __name__ == "__main__":
     # TODO Мобильный сделать кнопку закрытия программы
     # TODO Попробовать вынести в константы виджеты страниц stacks
 
-    version_file()
+    if "FLATPAK_ID" not in os.environ:
+        version_file()
+
     if PLATFORM == "windows":
         try:
             from ctypes import windll  # Only exists on Windows.
@@ -303,7 +305,7 @@ if __name__ == "__main__":
     startup()
 
     app = QApplication(sys.argv)
-    palette = QPalette()
+    palette = QPalette(Qt.GlobalColor.black)
 
     palette.setColor(QPalette.ColorRole.Window, QColor("#2B2B2B"))  # Цвет фона окна
     palette.setColor(

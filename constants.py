@@ -11,7 +11,7 @@ if getattr(sys, "frozen", False):
 else:
     # Если приложение запущено из исходного кода
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# BASE_DIR: str = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+
 PLATFORM: str = platform.system().lower()
 APP_TITLE: str = "WebAppReader"
 APP_DATA_FOLDER: str = os.path.join(
@@ -72,7 +72,7 @@ def get_wget() -> str | None:
 
 WGET = ""
 if PLATFORM == "windows":
-    WGET = os.path.join(BASE_DIR, "wget2.exe")
+    WGET = os.path.join(BASE_DIR, "wget.exe")
 elif PLATFORM == "linux":
     if get_wget() == "wget2":
         WGET = "wget2"

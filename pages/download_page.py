@@ -259,9 +259,10 @@ class DownloadPage(QWidget):
         self.url = self.url_line_edit.text()
         self.command = self.command_default.copy()
 
-        if self.no_parents and get_wget() == "wget2":
+        if self.no_parents:
             self.command.insert(4, "-np")
-            self.command.remove("--page-requisites")
+            if get_wget() == "wget2":
+                self.command.remove("--page-requisites")
         self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
         self.command.append("-P")
         self.command.append(self.path_text)

@@ -16,7 +16,7 @@ cleanup-commands:
   - /app/cleanup-BaseApp.sh
 modules:
   - python3-requirements.json
-  
+
   - name: wget2 #  proper workable version = 2.1
     buildsystem: simple
     build-commands:
@@ -28,10 +28,10 @@ modules:
       - type: git
         url: https://gitlab.com/gnuwget/wget2.git
         commit: 657e3d22c488a2d1f173e208e253995e15f8b6db
-        
+
   - name: webappreader
     buildsystem: simple
-    build-commands: 
+    build-commands:
       - mkdir -p /app/webappreader/
       - cp -r database /app/webappreader/database
       - cp -r pages /app/webappreader/pages
@@ -44,7 +44,7 @@ modules:
     sources:
       - type: git
         url: https://gitverse.ru/sc/shekin/webappreader.git
-        commit: 88d98aa310103be2704a3908a0cec1aec65e8a01
+        commit: ad8f7ea89dccd7a162e68b7b199bea80174eb0c1
       - type: file
         path: org.mintguide.WebAppReader.desktop
       - type: script

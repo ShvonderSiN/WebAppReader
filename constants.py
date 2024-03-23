@@ -21,7 +21,7 @@ APP_DATA_FOLDER: str = os.path.join(
 ERROR_LOG = os.path.join(APP_DATA_FOLDER, "error_log.txt")
 SOURCES_FOLDER: str = os.path.join(BASE_DIR, "src")
 APP_ICON: str = (
-    os.path.join(SOURCES_FOLDER, "logo.png")
+    os.path.join(SOURCES_FOLDER, "logo_128.png")
     if PLATFORM == "linux"
     else os.path.join(SOURCES_FOLDER, "logo.ico")
 )

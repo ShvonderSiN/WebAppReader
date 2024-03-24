@@ -15,8 +15,6 @@ finish-args:
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
 modules:
-  - python3-requirements.json
-
   - name: wget2 #  proper workable version = 2.1
     buildsystem: simple
     build-commands:
@@ -28,7 +26,7 @@ modules:
       - type: git
         url: https://gitlab.com/gnuwget/wget2.git
         commit: 657e3d22c488a2d1f173e208e253995e15f8b6db
-
+        
   - name: webappreader
     buildsystem: simple
     build-commands:
@@ -41,20 +39,20 @@ modules:
       - install -Dm644 settings.py -t /app/webappreader
       - install -Dm644 tools.py -t /app/webappreader
       - install -Dm644 webappreader.py -t /app/webappreader
+      - install -Dm644 src/logo_256.png /app/share/icons/hicolor/256x256/apps/org.mintguide.WebAppReader.png
+      - install -Dm755 webappreader.sh /app/bin/webappreader.sh
+      - install -Dm644 flatpak/org.mintguide.WebAppReader.desktop /app/share/applications/org.mintguide.WebAppReader.desktop
+      - install -Dm644 flatpak/org.mintguide.WebAppReader.metainfo.xml /app/share/metainfo/org.mintguide.WebAppReader.metainfo.xml
+      
     sources:
       - type: git
         url: https://github.com/ShvonderSiN/WebAppReader.git
-        commit: b417286898a3cce86ed844f53368cf36db8385d3
-      - type: file
-        path: org.mintguide.WebAppReader.desktop
+        commit: 8577a848c3032e298c5f44444221a294ca19f25c
       - type: script
         commands:
           - 'python3 /app/webappreader/webappreader.py "$@"'
         dest-filename: webappreader.sh
-      - type: file
-        path: org.mintguide.WebAppReader.metainfo.xml
-    post-install:
-      - install -Dm644 src/logo_128.png /app/share/icons/hicolor/128x128/apps/org.mintguide.WebAppReader.png
-      - install -Dm644 org.mintguide.WebAppReader.desktop /app/share/applications/org.mintguide.WebAppReader.desktop
-      - install -Dm755 webappreader.sh /app/bin/webappreader.sh
-      - install -Dm644 org.mintguide.WebAppReader.metainfo.xml /app/share/metainfo/org.mintguide.WebAppReader.metainfo.xml
+      
+      # depencies
+  - python3-requirements.json
+  

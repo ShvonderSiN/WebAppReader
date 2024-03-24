@@ -125,6 +125,8 @@ class DownloadPage(QWidget):
         self.PAGES = PagesConstants()
 
         self.activeDownloadThreads = []
+        self.download_thread = None
+
         layout = QVBoxLayout(self)
         layout.addStretch(1)
 
@@ -289,7 +291,8 @@ class DownloadPage(QWidget):
             )
             self.update_download_info(f"Error: {e}")
 
-        self.activeDownloadThreads.append(self.download_thread)
+        if self.download_thread is not None:
+            self.activeDownloadThreads.append(self.download_thread)
         self.main.go_to()
 
     def update_download_info(self, info: str = "") -> None:
@@ -320,7 +323,7 @@ class DownloadPage(QWidget):
             message = f"{get_domain(self.url)} may have rejected the connection, check the downloaded files."
         self.update_download_info(message)
         self.main.main_widget.show_all_websites()
-        if self.activeDownloadThreads:
+        if self.download_thread in self.activeDownloadThreads:
             self.activeDownloadThreads.remove(self.download_thread)
 
     def select_download_directory(self) -> None:

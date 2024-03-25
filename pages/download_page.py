@@ -320,7 +320,9 @@ class DownloadPage(QWidget):
         except IndexError:
             message = "Download complete. ADD IT BY PRESS + BUTTON"
         if (datetime.now() - self.start_time).total_seconds() < 1:
-            message = f"{get_domain(self.url)} may have rejected the connection, check the downloaded files."
+            message = (
+                f"Possible {get_domain(self.url)} may have rejected the connection"
+            )
         self.update_download_info(message)
         self.main.main_widget.show_all_websites()
         if self.download_thread in self.activeDownloadThreads:

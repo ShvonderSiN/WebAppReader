@@ -26,7 +26,7 @@ modules:
       - type: git
         url: https://gitlab.com/gnuwget/wget2.git
         commit: 657e3d22c488a2d1f173e208e253995e15f8b6db
-        
+
   - name: webappreader
     buildsystem: simple
     build-commands:
@@ -43,11 +43,11 @@ modules:
       - install -Dm755 webappreader.sh /app/bin/webappreader.sh
       - install -Dm644 flatpak/org.mintguide.WebAppReader.desktop /app/share/applications/org.mintguide.WebAppReader.desktop
       - install -Dm644 flatpak/org.mintguide.WebAppReader.metainfo.xml /app/share/metainfo/org.mintguide.WebAppReader.metainfo.xml
-      
+
     sources:
       - type: git
         url: https://github.com/ShvonderSiN/WebAppReader.git
-        commit: 8577a848c3032e298c5f44444221a294ca19f25c
+        commit: 105bb11fdcc4937a175d8eb6ec86c05ff993f1df
       - type: script
         commands:
           - 'python3 /app/webappreader/webappreader.py "$@"'

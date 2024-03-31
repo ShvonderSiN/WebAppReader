@@ -1,49 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>org.mintguide.WebAppReader</id>
-  <name>WebAppReader</name>
-  <summary>Application for downloading and viewing websites offline</summary>
-  <metadata_license>CC0-1.0</metadata_license>
-  <project_license>MIT</project_license>
-  <developer_name>Sergei Shekin</developer_name>
-  <description>
-    <p>WebAppReader is an application for downloading and viewing websites offline on different platforms</p>
-    <p>Main features include downloading and viewing websites offline or online, managing websites, viewing and editing source codes, downloading websites, and an interactive user interface based on Qt.</p>
-  </description>
-  <url type="homepage">https://mintguide.org/post/webappreader/</url>
-  <screenshots>
-    <screenshot type="default">
-      <image>https://mintguide.org/images/68747470733a2f2f692e706f7374696d672e63632f4e665947707670352f312d6d61696e2d77696e646f772e706e67_12269662108158655688.png</image>
-      <caption>Main window</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://i.postimg.cc/5224WqcJ/2-add-page.png</image>
-      <caption>Adding a page</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://i.postimg.cc/JhyRGr4d/3-view-page.png</image>
-      <caption>Viewing a page</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://i.postimg.cc/Mp3W6MxQ/4-edit-page.png</image>
-      <caption>Editing a page</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://i.postimg.cc/28wkt9KT/5-download-page.png</image>
-      <caption>Downloading a page</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://mintguide.org/images/6-view-page-shrink_11653438259071991383.png</image>
-      <caption>Viewing a page in shrink mode</caption>
-    </screenshot>
-  </screenshots>
-  <launchable type="desktop-id">org.mintguide.WebAppReader.desktop</launchable>
-  <provides>
-    <binary>webappreader</binary>
-  </provides>
-  <content_rating type="oars-1.0" />
-  <releases>
-    <release version="1.1" date="2024-03-12"/>
-  </releases>
+    <id>org.mintguide.WebAppReader</id>
+    <name>WebAppReader</name>
+    <summary>Application for downloading and viewing websites offline</summary>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>MIT</project_license>
+    <developer_name>Sergei Shekin</developer_name>
+    <description>
+        <p>WebAppReader is a tool for organizing saved websites for offline and even online viewing. Allows you to save
+            web pages and entire portals for later viewing without internet access.
+        </p>
+        <p>It was created taking into account the needs of users who need convenient access to information
+            (documentation) at any time.
+        </p>
+        <ul>
+            <li>Downloading and viewing websites offline or online</li>
+            <li>Website catalog management</li>
+            <li>Category management</li>
+            <li>Full website download*</li>
+            <li>Partial website download*</li>
+        </ul>
+        <p>*Not all sources allow downloading their resources.</p>
+    </description>
+    <url type="homepage">https://mintguide.org/post/webappreader/</url>
+    <screenshots>
+        <screenshot type="default">
+            <image>
+                https://mintguide.org/images/68747470733a2f2f692e706f7374696d672e63632f4e665947707670352f312d6d61696e2d77696e646f772e706e67_12269662108158655688.png
+            </image>
+            <caption>Main window</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://i.postimg.cc/5224WqcJ/2-add-page.png</image>
+            <caption>Adding a page</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://i.postimg.cc/JhyRGr4d/3-view-page.png</image>
+            <caption>Viewing a page</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://i.postimg.cc/Mp3W6MxQ/4-edit-page.png</image>
+            <caption>Editing a page</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://i.postimg.cc/28wkt9KT/5-download-page.png</image>
+            <caption>Downloading a page</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mintguide.org/images/6-view-page-shrink_11653438259071991383.png</image>
+            <caption>Viewing a page in shrink mode</caption>
+        </screenshot>
+    </screenshots>
+    <launchable type="desktop-id">org.mintguide.WebAppReader.desktop</launchable>
+    <provides>
+        <binary>webappreader</binary>
+    </provides>
+    <content_rating type="oars-1.0"/>
+    <releases>
+        <release version="1.1" date="2024-03-12"/>
+    </releases>
+    <releases>
+        <release version="1.2" date="2024-03-31"/>
+        <description>
+            <p>Fixed: Automatic title insertion when adding an online source.</p>
+            <p>Improved: Browser launch experience enhanced.</p>
+            <ul>
+                <li>Added some browser settings, e.g., PDF reading, disabled unsafe JavaScript.</li>
+                <li>(For online viewing) When watching videos, it's possible to enlarge to the application window
+                    size.
+                </li>
+                <li>(For online viewing) Added the filter https://easylist.to/easylist/easylist.txt</li>
+            </ul>
+        </description>
+    </releases>
 </component>
-

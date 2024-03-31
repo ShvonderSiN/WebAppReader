@@ -24,8 +24,6 @@ from settings import settings
 from ui.main_top_menu import TopUi
 from ui.row_widget import RowWidget
 
-version = "1.1.0"
-
 
 def version_file():
     import pyinstaller_versionfile
@@ -33,7 +31,7 @@ def version_file():
     try:
         pyinstaller_versionfile.create_versionfile(
             output_file=os.path.join(BASE_DIR, "version_file.txt"),
-            version=version,
+            version=VERSION,
             company_name="Sergei Shekin",
             file_description="Offline web content reader",
             internal_name="WebAppReader",
@@ -274,7 +272,6 @@ class MainWindow(QMainWindow):
             previous_page = self.page_history.pop()
             self.stacked_widget.setCurrentIndex(previous_page)
         else:
-            # No history available; revert to the main page or do nothing
             self.stacked_widget.setCurrentIndex(self.PAGES.MAIN_PAGE)
 
     @QtCore.pyqtSlot(name="exit")
@@ -299,7 +296,7 @@ if __name__ == "__main__":
         try:
             from ctypes import windll  # Only exists on Windows.
 
-            myappid = f"org.mintguide.WebbAppReader.{version}"
+            myappid = f"org.mintguide.WebbAppReader.{VERSION}"
             windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         except ImportError:
             pass
@@ -307,7 +304,7 @@ if __name__ == "__main__":
     startup()
 
     app = QApplication(sys.argv)
-    palette = QPalette(Qt.GlobalColor.black)
+    palette = QPalette(Qt.GlobalColor.darkGray)
 
     palette.setColor(QPalette.ColorRole.Window, QColor("#2B2B2B"))  # Цвет фона окна
     palette.setColor(

@@ -6,10 +6,36 @@ from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
+from constants import EASY_LIST
 from ui.browser_bottom_menu import BottomBrowserMenu
 
 
+class AdBlockingWebEnginePage(QWebEnginePage):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.your_blocked_domains_list = self._get_blocked_domains_list()
+
+    @staticmethod
+    def _get_blocked_domains_list():
+        with open(
+            EASY_LIST,
+            "r",
+            encoding="utf-8",
+        ) as f:
+            your_blocked_domains_list = set(f.read().splitlines())
+            return your_blocked_domains_list
+
+    def acceptNavigationRequest(self, url, _type, isMainFrame):
+        if url.host() in self.your_blocked_domains_list:
+            return False  # Блокировать запрос
+        return True  # Продолжить загрузку страницы
+
+
 class MyWebEngineView(QWebEngineView):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.context_menu = None
+        self.menu_position = None
 
     def contextMenuEvent(self, event):
         self.menu_position = event.globalPos()  # Сохраняем позицию клика
@@ -43,12 +69,15 @@ class Browser(QWidget):
     Класс браузера просмотрщика веб-страниц.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, url="https://google.com"):
         super().__init__(parent=parent)
-        self.url = ""
+        self.url = url
+        self.old_page = None
         self.main_page = parent
 
         self.browser = MyWebEngineView(self)
+        self.cookie_store = self.browser.page().profile().cookieStore()
+
         settings = self.browser.page().settings()
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
@@ -56,14 +85,18 @@ class Browser(QWidget):
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
         )
-        settings.setAttribute(
-            QWebEngineSettings.WebAttribute.JavascriptEnabled, True
-        )
+        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True
         )
         settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True
+        )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+        )
 
         self.old_page = None
 
@@ -75,6 +108,7 @@ class Browser(QWidget):
         layout.setStretch(0, 1)
 
         self.__signals()
+        self.set_url(url=self.url)
 
     def __signals(self):
         self.bottom_menu.search_widget.next_search_signal.connect(self.find_next)
@@ -82,6 +116,17 @@ class Browser(QWidget):
         self.bottom_menu.search_widget.perform_search_signal.connect(
             self.perform_search
         )
+        self.browser.page().fullScreenRequested.connect(
+            self.handle_full_screen_requested
+        )
+
+    def handle_full_screen_requested(self, request):
+        if request.toggleOn():
+            self.showFullScreen()  # Переход в полноэкранный режим
+            request.accept()
+        else:
+            self.showNormal()  # Возврат к обычному режиму
+            request.accept()
 
     @QtCore.pyqtSlot(str, name="perform_search")
     def perform_search(self, text: str):
@@ -99,7 +144,8 @@ class Browser(QWidget):
         )
 
     def set_url(self, url) -> None:
-        new_page = QWebEnginePage(self.browser)
+        # new_page = QWebEnginePage(self.browser)
+        new_page = AdBlockingWebEnginePage(self.browser)
 
         if self.old_page:
             self.browser.setPage(new_page)

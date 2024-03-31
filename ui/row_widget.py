@@ -9,7 +9,7 @@ from ui.context_menu import ContextMenu
 
 class RowWidget(QtWidgets.QGroupBox):
     """
-    Класс RowWidget, как отьелтный виджет отрисовкиисточника из таблицы
+    Класс RowWidget, как отдельный виджет отрисовки источника из таблицы
     """
 
     double_click_signal = pyqtSignal(int)

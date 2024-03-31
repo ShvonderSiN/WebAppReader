@@ -266,7 +266,10 @@ class AddEditPage(QWidget):
         path = self.path_line_edit.text()
         if not self.icon:
             try:
-                title, icon = get_new_title_icon(path)
+                if self.title_line_edit.text():
+                    title, icon = self.title_line_edit.text(), self.icon
+                else:
+                    title, icon = get_new_title_icon(path)
             except Exception:
                 title, icon = self.title_line_edit.text(), self.icon
         else:
@@ -299,5 +302,11 @@ class AddEditPage(QWidget):
 
         if title_text and is_html_source(path_text):
             self.dialog_box.save_button.setEnabled(True)
+        elif not title_text and is_html_source(path_text):
+            try:
+                self.title_line_edit.setText(get_new_title_icon(path_text)[0])
+                self.dialog_box.save_button.setEnabled(True)
+            except requests.exceptions.ConnectionError:
+                self.dialog_box.save_button.setEnabled(False)
         else:
             self.dialog_box.save_button.setEnabled(False)

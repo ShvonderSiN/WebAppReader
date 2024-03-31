@@ -12,6 +12,8 @@ else:
     # Если приложение запущено из исходного кода
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+VERSION = "1.2.0"
+
 PLATFORM: str = platform.system().lower()
 APP_TITLE: str = "WebAppReader"
 APP_DATA_FOLDER: str = os.path.join(
@@ -20,6 +22,7 @@ APP_DATA_FOLDER: str = os.path.join(
 )
 ERROR_LOG = os.path.join(APP_DATA_FOLDER, "error_log.txt")
 SOURCES_FOLDER: str = os.path.join(BASE_DIR, "src")
+EASY_LIST: str = os.path.join(BASE_DIR, SOURCES_FOLDER, "easylist.txt")
 APP_ICON: str = (
     os.path.join(SOURCES_FOLDER, "logo_128.png")
     if PLATFORM == "linux"

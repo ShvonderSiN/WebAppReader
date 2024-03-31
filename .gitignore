@@ -84,8 +84,5 @@ old.py
 /src/.wget-hsts
 
 /.vscode/
-version_file.txt
 /manifest.json
-*.spec
-/compile/
 wget-log

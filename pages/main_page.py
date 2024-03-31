@@ -2,7 +2,15 @@ from collections import defaultdict
 
 from PyQt6 import QtCore
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import (QGroupBox, QScrollArea, QSizePolicy, QSpacerItem, QToolBox, QVBoxLayout, QWidget)
+from PyQt6.QtWidgets import (
+    QGroupBox,
+    QScrollArea,
+    QSizePolicy,
+    QSpacerItem,
+    QToolBox,
+    QVBoxLayout,
+    QWidget,
+)
 
 from constants import *
 from database.queries import get_all_websites, get_single_website
@@ -18,7 +26,7 @@ class MainWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.main = parent
-        self.browser = Browser(self)
+        self.browser = Browser(self, url="")
         self.PAGES = PagesConstants()
         self.layout = QVBoxLayout(self)
         self.layout.setStretch(1, 1)
@@ -98,10 +106,11 @@ class MainWidget(QWidget):
                     QToolBox::tab {
                         background-color: rgb(255, 255, 255);
                         color: rgb(0, 0, 0);
-                        font-size: 16px;  
+                        font-size: 16px;
                         max-width: 100px;
                         font-weight: bold
-                    }"""
+                    }
+                    """
         )
         self.scroll_layout.addWidget(toolbox)
 
@@ -164,8 +173,6 @@ class MainWidget(QWidget):
             self.main.lower_info_label.setText(f"Unable to open {new_name}")
 
         else:
-            if self.browser is None:
-                self.browser = Browser(self)
             self.PAGES.BROWSER_PAGE = self.main.stacked_widget.addWidget(self.browser)
             self.browser.set_url(url)
             self.main.go_to(self.PAGES.BROWSER_PAGE)
@@ -177,6 +184,7 @@ class MainWidget(QWidget):
         Close the browser widget and remove it from the stacked widget.
         """
         self.main.go_back()
+        self.browser.set_url("")
         self.browser.hide()
 
     def __str__(self):

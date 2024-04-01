@@ -2,7 +2,7 @@
 <component type="desktop">
     <id>org.mintguide.WebAppReader</id>
     <name>WebAppReader</name>
-    <summary>Application for downloading and viewing websites offline</summary>
+    <summary>Downloading and viewing websites offline</summary>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>MIT</project_license>
     <developer_name>Sergei Shekin</developer_name>
@@ -57,7 +57,6 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.1" date="2024-03-12"/>
         <release version="1.2" date="2024-03-31">
             <description>
                 <p>Fixed: Automatic title insertion when adding an online source.</p>
@@ -69,5 +68,6 @@
                 </ul>
             </description>
         </release>
+        <release version="1.1" date="2024-03-12"/>
     </releases>
 </component>

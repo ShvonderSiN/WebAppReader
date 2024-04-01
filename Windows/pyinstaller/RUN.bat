@@ -5,10 +5,42 @@ setlocal enabledelayedexpansion
 :: Путь к директории виртуального окружения
 set "VENV_PATH=..\..\venv"
 
+:: Проверка существования виртуального окружения
+if not exist "%VENV_PATH%" (
+    echo Создание виртуального окружения...
+    python -m venv "%VENV_PATH%"
+    if %ERRORLEVEL% neq 0 (
+        echo Не удалось создать виртуальное окружение.
+        goto end
+    )
+)
+
 :: Активация виртуального окружения
 call "%VENV_PATH%\Scripts\activate.bat"
 
-:: Задайте переменные для удобства
+:: Обновление pip
+python -m pip install --upgrade pip
+
+:: Установка зависимостей из файла requirements.txt
+echo Установка зависимостей...
+python -m pip install -r ..\..\requirements.txt
+if %ERRORLEVEL% neq 0 (
+    echo Не удалось установить зависимости.
+    goto end
+)
+
+:: Установка PyInstaller
+echo Установка PyInstaller...
+python -m pip install pyinstaller
+if %ERRORLEVEL% neq 0 (
+    echo Не удалось установить PyInstaller.
+    goto end
+)
+
+:: Активация виртуального окружения
+call "%VENV_PATH%\Scripts\activate.bat"
+
+::   Переменные для удобства
 set "SPEC_FILE=windows.spec"
 set "DIST_DIR=.\dist\webappreader"
 set "SRC_DIR=.\dist\webappreader\_internal\src"

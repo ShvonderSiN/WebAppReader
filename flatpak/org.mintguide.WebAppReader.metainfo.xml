@@ -58,17 +58,16 @@
     <content_rating type="oars-1.0"/>
     <releases>
         <release version="1.1" date="2024-03-12"/>
-    </releases>
-    <releases>
-        <release version="1.2" date="2024-03-31"/>
-        <description>
-            <p>Fixed: Automatic title insertion when adding an online source.</p>
-            <p>Improved: Browser launch experience enhanced.</p>
-            <ul>
-                <li>Added some browser settings, e.g., PDF reading, disabled unsafe JavaScript.</li>
-                <li>(For online viewing) Added the filter https://easylist.to/easylist/easylist.txt</li>
-                <li>(For online viewing) Enabled cookies in case you need to be logged in.</li>
-            </ul>
-        </description>
+        <release version="1.2" date="2024-03-31">
+            <description>
+                <p>Fixed: Automatic title insertion when adding an online source.</p>
+                <p>Improved: Browser launch experience enhanced.</p>
+                <ul>
+                    <li>Added some browser settings, e.g., PDF reading, disabled unsafe JavaScript.</li>
+                    <li>(For online viewing) Added the filter https://easylist.to/easylist/easylist.txt</li>
+                    <li>(For online viewing) Enabled cookies in case you need to be logged in.</li>
+                </ul>
+            </description>
+        </release>
     </releases>
 </component>

@@ -2,7 +2,11 @@ import os
 import pathlib
 
 from PyQt6 import QtCore
-from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
+from PyQt6.QtWebEngineCore import (
+    QWebEnginePage,
+    QWebEngineProfile,
+    QWebEngineSettings,
+)
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
@@ -76,8 +80,7 @@ class Browser(QWidget):
         self.main_page = parent
 
         self.browser = MyWebEngineView(self)
-        self.cookie_store = self.browser.page().profile().cookieStore()
-
+        self.profile = QWebEngineProfile("myProfile", self)
         settings = self.browser.page().settings()
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
@@ -91,6 +94,8 @@ class Browser(QWidget):
         )
         settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
+        # settings.setAttribute(QWebEngineCookieStore.loadAllCookies, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True
         )
@@ -144,8 +149,7 @@ class Browser(QWidget):
         )
 
     def set_url(self, url) -> None:
-        # new_page = QWebEnginePage(self.browser)
-        new_page = AdBlockingWebEnginePage(self.browser)
+        new_page = AdBlockingWebEnginePage(self.profile, self.browser)
 
         if self.old_page:
             self.browser.setPage(new_page)

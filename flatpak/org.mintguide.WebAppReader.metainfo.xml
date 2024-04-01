@@ -66,10 +66,8 @@
             <p>Improved: Browser launch experience enhanced.</p>
             <ul>
                 <li>Added some browser settings, e.g., PDF reading, disabled unsafe JavaScript.</li>
-                <li>(For online viewing) When watching videos, it's possible to enlarge to the application window
-                    size.
-                </li>
                 <li>(For online viewing) Added the filter https://easylist.to/easylist/easylist.txt</li>
+                <li>(For online viewing) Enabled cookies in case you need to be logged in.</li>
             </ul>
         </description>
     </releases>

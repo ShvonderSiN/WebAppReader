@@ -50,14 +50,7 @@ WebAppReader — это приложение для загрузки и прос
 
 ## Лицензия
 
-1. Данное программное обеспечение может быть бесплатно использовано на операционной системе Linux. Вы имеете право
-   устанавливать, использовать, копировать и распространять программное обеспечение в неизменном виде на любом
-   количестве устройств с операционной системой Linux.
-2. Исходный код программного обеспечения открыт и доступен для ознакомления. Вы можете изучать и модифицировать исходный
-   код для личных, некоммерческих целей, при условии сохранения данной лицензии и указания авторства.
-3. Запрещено распространение модифицированных версий программного обеспечения без получения предварительного письменного
-   разрешения автора.
-   Авторские права (c) 2024, Сергей Шекин. Все права защищены.
+Данное программное обеспечение лицензировано в соответствии с лицензией MIT.
 
 ## Обратная связь
 
@@ -113,12 +106,7 @@ Screenshots are provided at the beginning of the document.
 
 ## License
 
-1. This software may be freely used on the Linux operating system. You are granted the right to install, use, copy, and
-   distribute the software in its unmodified form on any number of Linux-based devices.
-2. The source code of this software is open and available for review. You may study and modify the source code for
-   personal, non-commercial purposes, provided that this license and attribution are retained.
-3. The distribution of modified versions of the software without prior written permission from the author is prohibited.
-   Copyright (c), 2024, Sergei Shekin All rights reserved.
+This software is licensed under the MIT License.
 
 ## Feedback
 

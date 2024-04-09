@@ -36,7 +36,7 @@ elif PLATFORM == "linux":
     #     WGET = "wget2"
     # else:
     #     WGET = "wget"
-    WGET = 'wget'
+    WGET = "wget"
 
 
 APP_TITLE: str = "WebAppReader"

@@ -73,7 +73,6 @@ class MainWindow(QMainWindow):
 
         self.terminate_btn = QPushButton(text="X")
         self.terminate_btn.hide()
-        # self.terminate_btn.setToolTip(f"Terminate process")
         self.terminate_btn.setStyleSheet(
             "background-color: white;" "color: red;" "font-weight: bold;"
         )
@@ -307,11 +306,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
 
-    # TODO Сделать кнопку остановить процесс скачивания
     # TODO Мобильный сделать без рамки
     # TODO Мобильный сделать без on_top
     # TODO Мобильный сделать кнопку закрытия программы
-    # TODO Попробовать вынести в константы виджеты страниц stacks
     # TODO Сделать ограничение скорости, выбор для пользщователя
     # TODO Сделать возможность органичения выхода в интернет (только оффлайн)
 

@@ -12,7 +12,7 @@ else:
     # Если приложение запущено из исходного кода
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 
 PLATFORM: str = platform.system().lower()
 APP_TITLE: str = "WebAppReader"
@@ -77,10 +77,12 @@ WGET = ""
 if PLATFORM == "windows":
     WGET = os.path.join(BASE_DIR, "wget.exe")
 elif PLATFORM == "linux":
-    if get_wget() == "wget2":
-        WGET = "wget2"
-    else:
-        WGET = "wget"
+    # if get_wget() == "wget2":
+    #     WGET = "wget2"
+    # else:
+    #     WGET = "wget"
+    WGET = "wget"
+    # TODO: check later wget2 new version above 2.1
 
 
 REQUEST_TIMEOUT_HTML: int = 3

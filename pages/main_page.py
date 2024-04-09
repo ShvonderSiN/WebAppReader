@@ -107,8 +107,8 @@ class MainWidget(QWidget):
                         background-color: rgb(255, 255, 255);
                         color: rgb(0, 0, 0);
                         font-size: 16px;
-                        max-width: 100px;
-                        font-weight: bold
+                        max-width: 100%;
+                        font-weight: bold;
                     }
                     """
         )

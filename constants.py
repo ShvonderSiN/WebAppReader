@@ -20,25 +20,23 @@ def get_wget() -> str | None:
         return None
 
 
-WGET = ""
-
-
 if getattr(sys, "frozen", False):
     # Если приложение запущено из исполняемого файла
     BASE_DIR = sys._MEIPASS
-    if PLATFORM == "linux":
-        # if get_wget() == "wget2":
-        #     WGET = "wget2"
-        # else:
-        #     WGET = "wget"
-        WGET = "/app/bin/wget"
+
 else:
     # Если приложение запущено из исходного кода
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    WGET = "wget"
 
+WGET = ""
 if PLATFORM == "windows":
     WGET = os.path.join(BASE_DIR, "wget.exe")
+elif PLATFORM == "linux":
+    # if get_wget() == "wget2":
+    #     WGET = "wget2"
+    # else:
+    #     WGET = "wget"
+    WGET = 'wget'
 
 
 APP_TITLE: str = "WebAppReader"

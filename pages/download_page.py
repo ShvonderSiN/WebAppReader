@@ -49,7 +49,6 @@ class DownloadThread(QThread):
         dots: str = ""
         try:
             for line in iter(pipe.readline, ""):
-                print(line, end="")
                 if "saved" in line.lower() or "downloading" in line.lower():
                     count += 1
                     message_line = f"saving files:  {count}"
@@ -264,7 +263,7 @@ class DownloadPage(QWidget):
 
         if self.no_parents:
             self.command.insert(4, "-np")
-            if get_wget() == "wget2":
+            if WGET == "wget2":
                 self.command.remove("--page-requisites")
         self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
         settings.setValue("Paths/download_path", self.path_text)
@@ -272,7 +271,6 @@ class DownloadPage(QWidget):
         self.command.append(self.path_text)
         self.command.append(self.url.lower())
         self.command += self.headers
-        print(" ".join(self.command))
 
         try:
             if has_internet_connection(self.url):

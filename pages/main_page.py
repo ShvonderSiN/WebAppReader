@@ -27,6 +27,7 @@ class MainWidget(QWidget):
         super().__init__(parent=parent)
         self.main = parent
         self.browser = Browser(self, url="")
+        self.browser.hide()
         self.PAGES = PagesConstants()
         self.layout = QVBoxLayout(self)
         self.layout.setStretch(1, 1)

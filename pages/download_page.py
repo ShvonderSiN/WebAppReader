@@ -188,10 +188,9 @@ class DownloadPage(QWidget):
         layout.addWidget(self.dialog_save)
         layout.addStretch(1)
         layout.setContentsMargins(30, 0, 30, 0)
-        if get_wget() == "wget2":
+        if WGET == "wget2":
             self.command_default = [
                 WGET,
-                "-d",
                 "--recursive",
                 "--page-requisites",
                 "--level=7",
@@ -207,7 +206,6 @@ class DownloadPage(QWidget):
         else:
             self.command_default = [
                 WGET,
-                "-d",
                 "-r",
                 "-k",
                 "--level=7",

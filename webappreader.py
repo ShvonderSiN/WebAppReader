@@ -3,9 +3,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
+    QHBoxLayout,
     QLabel,
     QMainWindow,
     QMenu,
+    QPushButton,
     QStackedWidget,
     QSystemTrayIcon,
     QVBoxLayout,
@@ -65,6 +67,11 @@ class MainWindow(QMainWindow):
         self.PAGES = PagesConstants()
 
         layout = QVBoxLayout()
+        bottom_info_layout = QHBoxLayout()
+        self.terminate_btn = QPushButton(text="X")
+        self.terminate_btn.setFixedSize(QtCore.QSize(50, 25))
+        self.terminate_btn.setToolTip("Завершить процесс")
+
         self.lower_info_label = QLabel(text=COPYRIGHTS)
         self.lower_info_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
 
@@ -80,7 +87,9 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.stacked_widget)
 
-        layout.addWidget(self.lower_info_label)
+        bottom_info_layout.addWidget(self.lower_info_label)
+        bottom_info_layout.addWidget(self.terminate_btn)
+        layout.addLayout(bottom_info_layout)
 
         self.__style_ui()
 

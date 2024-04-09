@@ -101,17 +101,17 @@ class MainWidget(QWidget):
         self.clear_layout(self.scroll_layout)
 
         toolbox = QToolBox()
-        toolbox.setStyleSheet(
-            """
-                    QToolBox::tab {
-                        background-color: rgb(255, 255, 255);
-                        color: rgb(0, 0, 0);
-                        font-size: 16px;
-                        max-width: 100%;
-                        font-weight: bold;
-                    }
-                    """
-        )
+        # toolbox.setStyleSheet(
+        #     """
+        #             QToolBox::tab {
+        #                 background-color: rgb(255, 255, 255);
+        #                 color: rgb(0, 0, 0);
+        #                 font-size: 16px;
+        #                 max-width: 100%;
+        #                 font-weight: bold;
+        #             }
+        #             """
+        # )
         self.scroll_layout.addWidget(toolbox)
 
         db_websites = get_all_websites() or []

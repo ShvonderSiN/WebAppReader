@@ -49,7 +49,7 @@ class DownloadThread(QThread):
         dots: str = ""
         try:
             for line in iter(pipe.readline, ""):
-                print(line)
+                print(line, end="")
                 if "saved" in line.lower() or "downloading" in line.lower():
                     count += 1
                     message_line = f"saving files:  {count}"
@@ -191,6 +191,7 @@ class DownloadPage(QWidget):
         if get_wget() == "wget2":
             self.command_default = [
                 WGET,
+                "-d",
                 "--recursive",
                 "--page-requisites",
                 "--level=7",
@@ -206,6 +207,7 @@ class DownloadPage(QWidget):
         else:
             self.command_default = [
                 WGET,
+                "-d",
                 "-r",
                 "-k",
                 "--level=7",
@@ -273,7 +275,6 @@ class DownloadPage(QWidget):
         self.command.append(self.url.lower())
         self.command += self.headers
         print(" ".join(self.command))
-        """wget -r -k --level=7 -np --limit-rate=1500K -p -E --restrict-file-names=windows --no-check-certificate -P /home/shekin/Documents/HTML/111 https://developer.apple.com/fonts/ --header=Accept: */* --header=Connection: keep-alive --header=User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:57.0.1) Gecko/20100101 Firefox/57.0.1 --header=Accept-Language: en-US;q=0.5,en;q=0.3 --header=Cache-Control: max-age=0 --header=Referer: https://google.com --header=Pragma: no-cache --header=Accept-Encoding: identity"""
 
         try:
             if has_internet_connection(self.url):

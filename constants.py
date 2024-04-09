@@ -5,16 +5,42 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
+VERSION = "1.2.1"
+PLATFORM: str = platform.system().lower()
+
+
+def get_wget() -> str | None:
+    try:
+        check_wget = subprocess.run(["wget2", "-V"], stdout=subprocess.PIPE)
+        check_wget_output = check_wget.stdout.decode()
+        if "wget2" in check_wget_output.lower()[0:20]:
+            return "wget2"
+        return "wget"
+    except FileNotFoundError:
+        return None
+
+
+WGET = ""
+
+
 if getattr(sys, "frozen", False):
     # Если приложение запущено из исполняемого файла
     BASE_DIR = sys._MEIPASS
+    if PLATFORM == "linux":
+        # if get_wget() == "wget2":
+        #     WGET = "wget2"
+        # else:
+        #     WGET = "wget"
+        WGET = "/app/bin/wget"
 else:
     # Если приложение запущено из исходного кода
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    WGET = "wget"
 
-VERSION = "1.2.1"
+if PLATFORM == "windows":
+    WGET = os.path.join(BASE_DIR, "wget.exe")
 
-PLATFORM: str = platform.system().lower()
+
 APP_TITLE: str = "WebAppReader"
 APP_DATA_FOLDER: str = os.path.join(
     QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation),
@@ -60,29 +86,6 @@ ADD_NEW_CATEGORY_TEXT = "Add new..."
 NO_CATEGORY_TEXT = "No category"
 
 COPYRIGHTS = "Shekin © 2024, MintGuide.org. All rights reserved."
-
-
-def get_wget() -> str | None:
-    try:
-        check_wget = subprocess.run(["wget2", "-V"], stdout=subprocess.PIPE)
-        check_wget_output = check_wget.stdout.decode()
-        if "wget2" in check_wget_output.lower()[0:20]:
-            return "wget2"
-        return "wget"
-    except FileNotFoundError:
-        return None
-
-
-WGET = ""
-if PLATFORM == "windows":
-    WGET = os.path.join(BASE_DIR, "wget.exe")
-elif PLATFORM == "linux":
-    # if get_wget() == "wget2":
-    #     WGET = "wget2"
-    # else:
-    #     WGET = "wget"
-    WGET = "wget"
-    # TODO: check later wget2 new version above 2.1
 
 
 REQUEST_TIMEOUT_HTML: int = 3

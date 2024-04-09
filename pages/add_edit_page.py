@@ -308,5 +308,7 @@ class AddEditPage(QWidget):
                 self.dialog_box.save_button.setEnabled(True)
             except requests.exceptions.ConnectionError:
                 self.dialog_box.save_button.setEnabled(False)
+            except requests.exceptions.MissingSchema:
+                self.dialog_box.save_button.setEnabled(False)
         else:
             self.dialog_box.save_button.setEnabled(False)

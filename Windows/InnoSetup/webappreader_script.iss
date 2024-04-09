@@ -21,6 +21,7 @@ AppUpdatesURL=https://mintguide.org/post/webappreader/
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 InfoBeforeFile=C:\Users\Sergei\Desktop\webappreader\Windows\InnoSetup\before_installation.txt
+LicenseFile=C:\Users\Sergei\Desktop\webappreader\Windows\InnoSetup\license.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog

@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+import settings
 from database.queries import (
     delete_category,
     get_categories,
@@ -333,7 +334,8 @@ class AddEditPage(QWidget):
                 title, icon = get_new_title_icon(path_text)
                 self.title_line_edit.setText(title)
                 if icon.startswith("http"):
-                    save_dir = Path(BASE_DIR) / SOURCES_FOLDER
+                    save_dir = Path(settings.app_data_path) / APP_TITLE / "icons"
+                    save_dir.mkdir(parents=True, exist_ok=True)
                     saved_icon_path = download_and_save_icon(icon, save_dir)
                     pixmap = QPixmap(str(saved_icon_path))
                     self.icon_btn.setIcon(QIcon(pixmap))

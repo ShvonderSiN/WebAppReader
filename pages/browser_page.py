@@ -1,5 +1,5 @@
 import os
-import pathlib
+from pathlib import Path
 
 from PyQt6 import QtCore
 from PyQt6.QtWebEngineCore import (
@@ -10,7 +10,8 @@ from PyQt6.QtWebEngineCore import (
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
-from constants import EASY_LIST
+from constants import APP_TITLE, EASY_LIST
+from settings import app_data_path
 from ui.browser_bottom_menu import BottomBrowserMenu
 
 
@@ -80,7 +81,12 @@ class Browser(QWidget):
         self.main_page = parent
 
         self.browser = MyWebEngineView(self)
+
         self.profile = QWebEngineProfile("myProfile", self)
+        profile_path = Path(app_data_path) / APP_TITLE / "myProfile"
+        profile_path.mkdir(parents=True, exist_ok=True)
+        self.profile.setPersistentStoragePath(str(profile_path))
+
         settings = self.browser.page().settings()
         settings.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
@@ -158,7 +164,7 @@ class Browser(QWidget):
 
         self.old_page = new_page
         if os.path.isfile(url):
-            path = pathlib.Path(url).resolve()
+            path = Path(url).resolve()
             self.url = path.as_uri()
             self.browser.setUrl(QtCore.QUrl(self.url))
         else:

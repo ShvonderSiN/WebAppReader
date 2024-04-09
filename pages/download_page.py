@@ -55,7 +55,7 @@ class DownloadThread(QThread):
                     message_line = f"saving files:  {count}"
                 elif "converting" in line.lower():
                     message_line = f"converting links   {dots}"
-                    if len(dots) > 3:
+                    if len(dots) < 3:
                         dots = ""
                     else:
                         dots += "."
@@ -99,6 +99,7 @@ class DownloadThread(QThread):
             # Ожидание завершения потоков чтения
             stdout_thread.join()
             stderr_thread.join()
+
         except Exception as e:
             logging.error(f"Error starting the process: {e}")
             self.update_info.emit("Error starting the process")

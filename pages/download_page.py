@@ -43,6 +43,7 @@ class DownloadThread(QThread):
         self.command = command
         self.path_text = base_path
         self.domain = get_domain(url).split("//")[-1]
+        self.parent.main.terminate_btn.show()
 
     def _read_output(self, pipe: IO[str], emit_signal) -> None:
         count: int = 0
@@ -81,48 +82,58 @@ class DownloadThread(QThread):
                 creationflags=flag,
             )
 
+            # Создание и запуск потоков для чтения stdout и stderr
+            stdout_thread = threading.Thread(
+                target=self._read_output, args=(self.process.stdout, self.update_info)
+            )
+            stderr_thread = threading.Thread(
+                target=self._read_output, args=(self.process.stderr, self.update_info)
+            )
+
+            stdout_thread.start()
+            stderr_thread.start()
+
+            # Ожидание завершения процесса
+            self.process.wait()
+
+            # Ожидание завершения потоков чтения
+            stdout_thread.join()
+            stderr_thread.join()
         except Exception as e:
             logging.error(f"Error starting the process: {e}")
             self.update_info.emit("Error starting the process")
+
+        finally:
+            try:
+                message = f"{self.domain} fully saved. ADD IT BY PRESS + BUTTON"
+            except IndexError:
+                message = "Download complete. ADD IT BY PRESS + BUTTON"
+            if (datetime.now() - self.parent.start_time).total_seconds() < 0.5:
+                message = f"Possible {self.domain} may have rejected the connection"
+
+            self.parent.update_download_info(message)
+            self.parent.main.terminate_btn.hide()
             self.finished.emit()
-            return
 
-        # Создание и запуск потоков для чтения stdout и stderr
-        stdout_thread = threading.Thread(
-            target=self._read_output, args=(self.process.stdout, self.update_info)
-        )
-        stderr_thread = threading.Thread(
-            target=self._read_output, args=(self.process.stderr, self.update_info)
-        )
-
-        stdout_thread.start()
-        stderr_thread.start()
-
-        # Ожидание завершения процесса
-        self.process.wait()
-
-        # Ожидание завершения потоков чтения
-        stdout_thread.join()
-        stderr_thread.join()
-
-        self.finished.emit()
         self.command.clear()
 
     def stop(self):
         if self.process:
-            self.process.terminate()  # Пытаемся корректно завершить процесс
-            self.process.wait(timeout=5)  # Даем время на завершение
-            if self.process.poll() is None:  # Если процесс все еще не завершился
-                self.process.kill()  # Принудительно завершаем процесс
-                self.process.wait()  # Дожидаемся его завершения
-        self.quit()  # Завершаем поток
+            self.process.terminate()
+            self.process.wait(timeout=5)
+            if self.process.poll() is None:
+                self.process.kill()
+                self.process.wait()
+
+        self.quit()
 
 
 class DownloadPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.main = parent
+        self.main: QWidget = parent
         self.PAGES = PagesConstants()
+        self.domain = None
 
         self.activeDownloadThreads = []
         self.download_thread = None
@@ -187,6 +198,8 @@ class DownloadPage(QWidget):
         layout.addWidget(self.dialog_save)
         layout.addStretch(1)
         layout.setContentsMargins(30, 0, 30, 0)
+
+        self.main.terminate_btn.clicked.connect(self.__terminate_current_process)
         if WGET == "wget2":
             self.command_default = [
                 WGET,
@@ -259,6 +272,7 @@ class DownloadPage(QWidget):
         Initializes the download process by retrieving the URL from the text input field and setting up the command for download.
         """
         self.url = self.url_line_edit.text()
+        self.domain = get_domain(self.url).split("//")[-1]
         self.command = self.command_default.copy()
 
         if self.no_parents:
@@ -296,6 +310,14 @@ class DownloadPage(QWidget):
             self.activeDownloadThreads.append(self.download_thread)
         self.main.go_to()
 
+    def __terminate_current_process(self) -> None:
+        if self.activeDownloadThreads:
+            thread = self.activeDownloadThreads.pop()
+            if thread and thread.isRunning():
+                thread.stop()
+                thread.wait()
+            self.update_download_info("Terminated")
+
     def update_download_info(self, info: str = "") -> None:
         """
         Update the download information label with the provided text.
@@ -307,6 +329,12 @@ class DownloadPage(QWidget):
             None
         """
         self.main.lower_info_label.setText(info)
+        self.main.terminate_btn.setToolTip(f'Terminate process "{self.domain}"')
+
+        if self.activeDownloadThreads:
+            self.main.terminate_btn.show()
+        else:
+            self.main.terminate_btn.hide()
 
     def download_finished(self) -> None:
         """
@@ -316,15 +344,8 @@ class DownloadPage(QWidget):
         Returns:
             None: This function does not return anything.
         """
-        try:
-            message = f"{get_domain(self.url)} fully saved. ADD IT BY PRESS + BUTTON"
-        except IndexError:
-            message = "Download complete. ADD IT BY PRESS + BUTTON"
-        if (datetime.now() - self.start_time).total_seconds() < 1:
-            message = (
-                f"Possible {get_domain(self.url)} may have rejected the connection"
-            )
-        self.update_download_info(message)
+
+        self.main.terminate_btn.hide()
         self.main.main_widget.show_all_websites()
         if self.download_thread in self.activeDownloadThreads:
             self.activeDownloadThreads.remove(self.download_thread)
@@ -354,7 +375,6 @@ class DownloadPage(QWidget):
                 self.path_line_edit.setText(directory_from_settings)
         except Exception as e:
             logging.error(f"Error selecting download directory: {e}")
-            # Отображение сообщения об ошибке пользователю
             QMessageBox.critical(
                 self,
                 title="Error",

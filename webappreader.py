@@ -1,3 +1,5 @@
+from threading import Thread
+
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
@@ -68,12 +70,19 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()
         bottom_info_layout = QHBoxLayout()
+
         self.terminate_btn = QPushButton(text="X")
-        self.terminate_btn.setFixedSize(QtCore.QSize(50, 25))
-        self.terminate_btn.setToolTip("Завершить процесс")
+        self.terminate_btn.hide()
+        # self.terminate_btn.setToolTip(f"Terminate process")
+        self.terminate_btn.setStyleSheet(
+            "background-color: white;" "color: red;" "font-weight: bold;"
+        )
+        self.terminate_btn.setFixedSize(QtCore.QSize(20, 20))
 
         self.lower_info_label = QLabel(text=COPYRIGHTS)
-        self.lower_info_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
+        self.lower_info_label.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
 
         self.top_ui = TopUi(parent=self)
         layout.addWidget(self.top_ui)
@@ -223,10 +232,8 @@ class MainWindow(QMainWindow):
             event.ignore()
         else:
             # Остановка всех активных потоков скачивания перед выходом
-            if self.download_page and hasattr(
-                self.download_page, "activeDownloadThreads"
-            ):
-                for thread in self.download_page.activeDownloadThreads:
+            if self.active_threads:
+                for thread in self.active_threads:
                     if thread.isRunning():
                         thread.stop()
                         thread.wait()
@@ -251,6 +258,11 @@ class MainWindow(QMainWindow):
         # self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, True)
         self.show()
 
+    @property
+    def active_threads(self) -> list[Thread] | None:
+        if self.download_page and hasattr(self.download_page, "activeDownloadThreads"):
+            return self.download_page.activeDownloadThreads
+
     @QtCore.pyqtSlot(int, name="go_to")
     def go_to(self, page: int | None = None) -> None:
         """
@@ -270,6 +282,8 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentIndex(
             page if page is not None else self.PAGES.MAIN_PAGE
         )
+        if not self.active_threads:
+            self.download_page.update_download_info(COPYRIGHTS)
 
     @QtCore.pyqtSlot(name="go_back")
     def go_back(self) -> None:
@@ -282,6 +296,8 @@ class MainWindow(QMainWindow):
             self.stacked_widget.setCurrentIndex(previous_page)
         else:
             self.stacked_widget.setCurrentIndex(self.PAGES.MAIN_PAGE)
+        if not self.active_threads:
+            self.download_page.update_download_info(COPYRIGHTS)
 
     @QtCore.pyqtSlot(name="exit")
     def exit(self):

@@ -138,6 +138,21 @@ def open_file(path: str) -> str | None:
         return None
 
 
+def download_and_save_icon(icon_url, save_dir):
+    response = requests.get(icon_url)
+    response.raise_for_status()  # Проверка на успешный ответ
+
+    # Извлекаем имя файла из URL и строим путь сохранения
+    icon_filename = Path(icon_url).name
+    target_path = Path(save_dir) / icon_filename
+
+    # Сохраняем иконку локально
+    with open(target_path, "wb") as f:
+        f.write(response.content)
+
+    return target_path
+
+
 # def delete_icon(path: str) -> None:
 #     path = str(path)
 #     icon_name = os.path.basename(path)
@@ -205,30 +220,19 @@ def get_new_title_icon(path) -> tuple:
         if icon_link and icon_link.has_attr("href")
         else "/favicon.ico"
     )
-    # if local:
-    # Формируем путь к иконке относительно пути к HTML файлу
-    icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
+
+    if not icon_href.startswith("http"):
+        icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
+    else:
+        icon_path = icon_href
 
     # Проверяем, существует ли файл по данному пути
-    if os.path.isfile(icon_path):
+    if os.path.isfile(icon_path) or icon_path.startswith("http"):
         return title_result, icon_path
+
     return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(
         BASE_DIR, "src", NO_IMAGE
     )
-    # else:
-    #     base_url = path
-    #     absolute_icon_url = urljoin(base_url, icon_href)
-    #     domain_name = urlparse(absolute_icon_url).netloc
-    #     file_name = domain_name + os.path.basename(absolute_icon_url)
-    #     req = Request()
-    #     img = req.get(url=absolute_icon_url, binary=True, timeout=REQUEST_TIMEOUT_ICON)
-    #     with open(
-    #         os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name), "wb"
-    #     ) as file:
-    #         file.write(img)
-    #         return title_result or domain_name.capitalize(), os.path.join(
-    #             BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, file_name
-    #         )
 
 
 def widgets_value_cleaner(self, page: int):

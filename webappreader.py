@@ -1,7 +1,6 @@
 from threading import Thread
 
 from PyQt6 import QtCore
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
@@ -290,7 +289,6 @@ class MainWindow(QMainWindow):
         self.CURRENT_PAGE = self.stacked_widget.currentIndex()
         self.PREVIOUS_PAGE = self.stacked_widget.currentIndex()
         if self.page_history:
-            # Восстанавливаем предыдущую страницу, а не MAIN_PAGE
             previous_page = self.page_history.pop()
             self.stacked_widget.setCurrentIndex(previous_page)
         else:
@@ -327,8 +325,7 @@ if __name__ == "__main__":
     startup()
 
     app = QApplication(sys.argv)
-    palette = QPalette(Qt.GlobalColor.darkGray)
-
+    palette = QPalette(QtCore.Qt.GlobalColor.black)
     palette.setColor(QPalette.ColorRole.Window, QColor("#2B2B2B"))  # Цвет фона окна
     palette.setColor(
         QPalette.ColorRole.WindowText, QColor("#A9B7C6")
@@ -356,9 +353,7 @@ if __name__ == "__main__":
     )  # Яркий цвет текста
     palette.setColor(QPalette.ColorRole.Link, QColor("#859DD6"))  # Цвет ссылок
     palette.setColor(QPalette.ColorRole.Highlight, QColor("#4C4F51"))  # Цвет подсветки
-    palette.setColor(
-        QPalette.ColorRole.HighlightedText, QColor("#FFFFFF")
-    )  # Цвет текста подсветки
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#FFFFFF"))
 
     app.setPalette(palette)
 

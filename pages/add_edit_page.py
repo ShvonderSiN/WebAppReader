@@ -1,4 +1,5 @@
 from PyQt6 import QtCore
+from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -105,9 +106,16 @@ class AddEditPage(QWidget):
         self.dialog_box.save_button.clicked.connect(self.on_yes_clicked)
         self.dialog_box.cancel_button.clicked.connect(self.on_cancel_clicked)
 
-        self.path_line_edit.textChanged.connect(self.__validate_field)
-        self.title_line_edit.textChanged.connect(self.__validate_field)
+        # self.path_line_edit.textChanged.connect(self.__validate_field)
+        # self.title_line_edit.textChanged.connect(self.__validate_field)
+        self.validation_timer = QTimer(self)
+        self.validation_timer.setInterval(500)  # Задержка в мс перед валидацией
+        self.validation_timer.setSingleShot(True)
+        self.validation_timer.timeout.connect(self.__validate_field)
+        self.path_line_edit.textChanged.connect(self.start_validation_timer)
 
+    def start_validation_timer(self):
+        self.validation_timer.start()
         self.remove_cat_btn.clicked.connect(self.__remove_category)
 
     def __remove_category(self) -> None:
@@ -274,8 +282,10 @@ class AddEditPage(QWidget):
                 title, icon = self.title_line_edit.text(), self.icon
         else:
             title, icon = self.title_line_edit.text(), self.icon
-        category_text = self.category_combo_box.currentText().capitalize()
 
+        category_text = self.category_combo_box.currentText().capitalize()
+        if isinstance(icon, Path):
+            icon = icon.as_posix()
         # Проверка режима
         if self.PAGES.EDIT_SITE_ID:
             update_single_website(
@@ -292,6 +302,18 @@ class AddEditPage(QWidget):
 
         self.icon = None
 
+    def is_valid_url(self, url):
+        regex = re.compile(
+            r"^(?:http|ftp)s?://"  # http:// или https://
+            r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # домен...
+            r"localhost|"  # localhost...
+            r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...или ip
+            r"(?::\d+)?"  # необязательный порт
+            r"(?:/?|[/?]\S+)$",
+            re.IGNORECASE,
+        )
+        return re.match(regex, url) is not None
+
     def __validate_field(self):
         """
         Validates the field inputs by checking if the title text
@@ -302,13 +324,26 @@ class AddEditPage(QWidget):
 
         if title_text and is_html_source(path_text):
             self.dialog_box.save_button.setEnabled(True)
-        elif not title_text and is_html_source(path_text):
+        elif (
+            not title_text
+            and is_html_source(path_text)
+            and self.is_valid_url(path_text)
+        ):
             try:
-                self.title_line_edit.setText(get_new_title_icon(path_text)[0])
+                title, icon = get_new_title_icon(path_text)
+                self.title_line_edit.setText(title)
+                if icon.startswith("http"):
+                    save_dir = Path(BASE_DIR) / SOURCES_FOLDER
+                    saved_icon_path = download_and_save_icon(icon, save_dir)
+                    pixmap = QPixmap(str(saved_icon_path))
+                    self.icon_btn.setIcon(QIcon(pixmap))
+                    self.icon = saved_icon_path
                 self.dialog_box.save_button.setEnabled(True)
             except requests.exceptions.ConnectionError:
                 self.dialog_box.save_button.setEnabled(False)
             except requests.exceptions.MissingSchema:
+                self.dialog_box.save_button.setEnabled(False)
+            except requests.exceptions.InvalidURL:
                 self.dialog_box.save_button.setEnabled(False)
         else:
             self.dialog_box.save_button.setEnabled(False)

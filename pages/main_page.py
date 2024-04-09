@@ -170,7 +170,6 @@ class MainWidget(QWidget):
                 new_name = "\\" + "\\".join((name[-2], name[-1]))
             else:
                 pass
-            # new_name = '/' + '/'.join((name[-2], name[-1]))
             self.main.lower_info_label.setText(f"Unable to open {new_name}")
 
         else:

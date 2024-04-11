@@ -26,3 +26,4 @@ SQLAlchemy
 typing_extensions
 urllib3
 webencodings
+pyinstaller_versionfile

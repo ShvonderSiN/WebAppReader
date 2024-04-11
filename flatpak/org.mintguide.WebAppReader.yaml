@@ -53,7 +53,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/ShvonderSiN/WebAppReader.git
-        commit: 51d36cb139bbb5e802b711df6257a17545b451fa
+        commit: c91b0500910c8a93a2146b176a7b34d5fc037df6
       - type: script
         commands:
           - 'python3 /app/webappreader/webappreader.py "$@"'

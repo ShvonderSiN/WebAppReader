@@ -50,6 +50,7 @@ class DownloadThread(QThread):
         dots: str = ""
         try:
             for line in iter(pipe.readline, ""):
+                print(line, end="")
                 if "saved" in line.lower() or "downloading" in line.lower():
                     count += 1
                     message_line = f"saving files:  {count}"
@@ -226,7 +227,7 @@ class DownloadPage(QWidget):
                 "-p",
                 "-E",
                 "--restrict-file-names=windows",
-                # '-nc',
+                "-nc",
                 "--no-check-certificate",
             ]
 
@@ -284,7 +285,7 @@ class DownloadPage(QWidget):
         settings.setValue("Paths/download_path", self.path_text)
         self.command.append("-P")
         self.command.append(self.path_text)
-        self.command.append(self.url.lower())
+        self.command.append(self.url)
         self.command += self.headers
 
         try:

@@ -57,17 +57,12 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.2.2" date="2024-04-09">
+        <release version="1.2.4" date="2024-04-11">
             <description>
-                <p>Fixed: Asynchronous downloading is disabled because the downloader is unstable</p>
-                <p>Improved: It is now possible to interrupt current downloads.</p>
-                <ul>
-                    <li>Added some browser settings, e.g., the sound is on.</li>
-                    <li>All settings are placed in a separate folder with the config file</li>
-                    <li>Fixed the display of tabs on the main page</li>
-                </ul>
+                <p>Fixed a change in the case of the source link, sometimes the source site gave 404</p>
             </description>
         </release>
+        <release version="1.2.2" date="2024-03-31"/>
         <release version="1.2.0" date="2024-03-31"/>
         <release version="1.1.0" date="2024-03-12"/>
     </releases>

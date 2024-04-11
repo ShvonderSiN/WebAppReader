@@ -50,7 +50,6 @@ class DownloadThread(QThread):
         dots: str = ""
         try:
             for line in iter(pipe.readline, ""):
-                print(line, end="")
                 if "saved" in line.lower() or "downloading" in line.lower():
                     count += 1
                     message_line = f"saving files:  {count}"

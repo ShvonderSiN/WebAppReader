@@ -57,7 +57,7 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.2.4" date="2024-04-11">
+        <release version="1.2.5" date="2024-04-11">
             <description>
                 <p>Fixed a change in the case of the source link, sometimes the source site gave 404</p>
             </description>

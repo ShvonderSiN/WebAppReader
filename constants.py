@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.2.4"
+VERSION = "1.2.5"
 PLATFORM: str = platform.system().lower()
 
 

@@ -334,7 +334,12 @@ class AddEditPage(QWidget):
                 title, icon = get_new_title_icon(path_text)
                 self.title_line_edit.setText(title)
                 if icon.startswith("http"):
-                    save_dir = Path(settings.app_data_path) / APP_TITLE / "icons"
+                    save_dir = (
+                        Path(settings.app_data_path)
+                        / APP_TITLE
+                        / "icons"
+                        / "_".join(title.lower().split())
+                    )
                     save_dir.mkdir(parents=True, exist_ok=True)
                     saved_icon_path = download_and_save_icon(icon, save_dir)
                     pixmap = QPixmap(str(saved_icon_path))

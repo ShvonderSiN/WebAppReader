@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import requests
 from PyQt6.QtWidgets import QLineEdit
@@ -119,9 +119,6 @@ def is_html_source(source):
     """
     source = source.lower()
     if source.startswith("http://") or source.startswith("https://"):
-        # if not has_internet_connection():
-        #     return False  # Возвращает False, если нет интернет-соединения
-
         return True
     else:
         _, ext = os.path.splitext(source)
@@ -140,9 +137,8 @@ def open_file(path: str) -> str | None:
 
 def download_and_save_icon(icon_url, save_dir):
     response = requests.get(icon_url)
-    response.raise_for_status()  # Проверка на успешный ответ
+    response.raise_for_status()
 
-    # Извлекаем имя файла из URL и строим путь сохранения
     icon_filename = Path(icon_url).name
     target_path = Path(save_dir) / icon_filename
 
@@ -153,52 +149,21 @@ def download_and_save_icon(icon_url, save_dir):
     return target_path
 
 
-# def delete_icon(path: str) -> None:
-#     path = str(path)
-#     icon_name = os.path.basename(path)
-#
-#     icon_folder = os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER, icon_name)
-#     if icon_folder == path and os.path.exists(path):
-#         os.remove(path)
-
-
 def get_domain(url):
     parsed_url = urlparse(url)
     domain_url = urlunparse((parsed_url.scheme, parsed_url.netloc, "", "", "", ""))
     return domain_url
 
 
-# def delete_data_from_website(path: str) -> None:
-#     if not path.startswith("http"):
-#         path_parts = path.split(os.sep)
-#         try:
-#             websites_index = path_parts.index(DATA_WEBSITES_FOLDER)
-#             domain_folder = path_parts[websites_index + 1]
-#             folder_to_remove = os.path.join(
-#                 BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER, domain_folder
-#             )
-#             from database.database import session
-#
-#             db_site = (
-#                 session.query(Website)
-#                 .filter(Website.url.ilike(f"%{domain_folder}%"))
-#                 .first()
-#             )
-#
-#             if not db_site and os.path.exists(folder_to_remove):
-#                 shutil.rmtree(folder_to_remove)
-#         except ValueError:
-#             pass
-
-
 def get_new_title_icon(path) -> tuple:
-    """Получаю введенный заголовок для вывода в окне добавления"""
+    """Retrieve the page title and icon for a given HTML path or URL."""
     local = os.path.isfile(path)
     if local:
         html = open_file(path)
     else:
         req = Request()
         html = req.get(url=path, pretty_html=True, timeout=REQUEST_TIMEOUT_HTML)
+
     try:
         soup = BeautifulSoup(html, "html5lib")
     except TypeError:
@@ -207,32 +172,46 @@ def get_new_title_icon(path) -> tuple:
     title = soup.title.string.strip() if soup.title else ""
     title_result = re.sub(r"\s+", " ", title).strip()
 
-    # Попробуем найти иконку в различных местах
-    icon_link = (
-        soup.find("link", rel="apple-touch-icon")
-        or soup.find("link", rel="icon")
-        or soup.find("link", attrs={"rel": re.compile(r"(^|\s)icon(\s|$)")})
-        or soup.find("link", href="/favicon.ico")
+    # Expanding the icon search to include various rel attributes
+    icons = soup.find_all(
+        "link", href=True, rel=re.compile(r"(apple-touch-icon|icon|shortcut icon)")
     )
 
-    icon_href = (
-        icon_link["href"]
-        if icon_link and icon_link.has_attr("href")
-        else "/favicon.ico"
+    # Improved sorting: prioritize PNG, then other popular formats, and place ICO last
+    icons_sorted = sorted(
+        icons,
+        key=lambda x: (
+            x["href"].endswith(".ico"),
+            not x["href"].endswith(".png"),
+            x["rel"],
+        ),
     )
 
-    if not icon_href.startswith("http"):
-        icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
+    icon_href = next(
+        (icon["href"] for icon in icons_sorted if icon.has_attr("href")), "/favicon.ico"
+    )
+
+    # Handle URLs starting with '//'
+    if icon_href.startswith("//"):
+        icon_href = "http:" + icon_href
+
+    if not icon_href.startswith(("http", "//")):
+        if local:
+            icon_path = os.path.normpath(os.path.join(os.path.dirname(path), icon_href))
+        else:
+            icon_path = urljoin(path, icon_href)
     else:
         icon_path = icon_href
 
-    # Проверяем, существует ли файл по данному пути
-    if os.path.isfile(icon_path) or icon_path.startswith("http"):
+    if (
+        local
+        and os.path.isfile(icon_path)
+        or not local
+        and icon_path.startswith("http")
+    ):
         return title_result, icon_path
 
-    return title_result or os.path.dirname(icon_path).capitalize(), os.path.join(
-        BASE_DIR, "src", NO_IMAGE
-    )
+    return title_result or "Enter title", os.path.join(BASE_DIR, "src", NO_IMAGE)
 
 
 def widgets_value_cleaner(self, page: int):
@@ -243,12 +222,6 @@ def widgets_value_cleaner(self, page: int):
 
 
 def create_folders():
-    # if not os.path.exists(os.path.join(BASE_DIR, DATA_FOLDER)):
-    #     os.mkdir(os.path.join(BASE_DIR, DATA_FOLDER))
-    # if not os.path.exists(os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER)):
-    #     os.mkdir(os.path.join(BASE_DIR, DATA_FOLDER, DATA_ICONS_FOLDER))
-    # if not os.path.exists(os.path.join(BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER)):
-    #     os.mkdir(os.path.join(BASE_DIR, DATA_FOLDER, DATA_WEBSITES_FOLDER))
     if not os.path.exists(APP_DATA_FOLDER):
         os.makedirs(APP_DATA_FOLDER)
 

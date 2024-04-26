@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WebAppReader"
-#define MyAppVersion "1.2.5"
+#define MyAppVersion "1.2.6"
 #define MyAppPublisher "Sergei Shekin"
 #define MyAppURL "https://mintguide.org/"
 #define MyAppExeName "webappreader.exe"
@@ -43,7 +43,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "C:\Users\Sergei\Desktop\webappreader\Windows\pyinstaller\dist\webappreader\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "C:\Users\Sergei\Desktop\webappreader\Windows\pyinstaller\dist\webappreader\src\*"; DestDir: "{app}\src\"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "C:\Users\Sergei\Desktop\webappreader\Windows\pyinstaller\dist\webappreader\wget.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "C:\Users\Sergei\Desktop\webappreader\Windows\pyinstaller\dist\webappreader\wget2.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Sergei\Desktop\webappreader\Windows\pyinstaller\dist\webappreader\_internal\*"; DestDir: "{app}\_internal\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

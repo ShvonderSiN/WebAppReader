@@ -4,7 +4,7 @@
 a = Analysis(
     ['..\\..\\webappreader.py'],
     pathex=[],
-    binaries=[('..\\..\\wget.exe', '.')],
+    binaries=[('..\\..\\wget2.exe', '.')],
     datas=[('..\\..\\src', 'src')],
     hiddenimports=[],
     hookspath=[],

@@ -60,7 +60,6 @@ class MainWidget(QWidget):
     def create_website_row_widget(self, site):
         """Создает виджет строки для отдельного веб-сайта."""
         rowBox = RowWidget(id_site=site.id, title=site.title, parent=self)
-        print(site.icon)
         rowBox.double_click_signal.connect(
             lambda id_site=site.id: self.open_browser(id_site)
         )

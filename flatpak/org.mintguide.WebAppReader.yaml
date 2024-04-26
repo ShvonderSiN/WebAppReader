@@ -23,14 +23,17 @@ modules:
     build-commands:
       - wget https://easylist.to/easylist/easylist.txt -O /app/webappreader/src/easylist.txt
 
-  - name: wget
-    buildsystem: autotools
-    config-opts:
-      - --prefix=/app
+  - name: wget2 #  proper workable version = 2.1
+    buildsystem: simple
+    build-commands:
+      - ./bootstrap
+      - ./configure --prefix=/app
+      - make
+      - make install
     sources:
-      - type: archive
-        url: https://ftp.gnu.org/gnu/wget/wget-1.21.4.tar.gz
-        sha256: 81542f5cefb8faacc39bbbc6c82ded80e3e4a88505ae72ea51df27525bcde04c
+      - type: git
+        url: https://gitlab.com/gnuwget/wget2.git
+        commit: 657e3d22c488a2d1f173e208e253995e15f8b6db
 
   - name: webappreader
     buildsystem: simple

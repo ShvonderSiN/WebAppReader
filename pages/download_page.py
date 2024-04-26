@@ -204,16 +204,15 @@ class DownloadPage(QWidget):
         if WGET == "wget2":
             self.command_default = [
                 WGET,
-                "--recursive",
-                "--page-requisites",
-                "--level=7",
+                "-r",
+                "-k",
+                "-p",
                 "--limit-rate=1500K",
-                "--no-check-certificate",
-                "--force-directories",
+                "--check-certificate=off",
+                "--force-directories=on",
                 "--restrict-file-names=windows",
-                "--adjust-extension",
-                "--convert-links",
-                "--random-wait",
+                "--adjust-extension=on",
+                "--random-wait=on",
             ]
 
         else:
@@ -221,7 +220,6 @@ class DownloadPage(QWidget):
                 WGET,
                 "-r",
                 "-k",
-                "--level=7",
                 "--limit-rate=1500K",
                 "-p",
                 "-E",
@@ -278,8 +276,6 @@ class DownloadPage(QWidget):
 
         if self.no_parents:
             self.command.insert(4, "-np")
-            if WGET == "wget2":
-                self.command.remove("--page-requisites")
         self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
         settings.setValue("Paths/download_path", self.path_text)
         self.command.append("-P")

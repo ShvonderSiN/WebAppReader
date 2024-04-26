@@ -210,7 +210,7 @@ class DownloadPage(QWidget):
                 "--limit-rate=1500K",
                 "--check-certificate=off",
                 "--force-directories=on",
-                "--restrict-file-names=windows",
+                "--restrict-file-names=lowercase",
                 "--adjust-extension=on",
                 "--random-wait=on",
             ]

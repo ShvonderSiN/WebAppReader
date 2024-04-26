@@ -32,11 +32,11 @@ WGET = ""
 if PLATFORM == "windows":
     WGET = os.path.join(BASE_DIR, "wget.exe")
 elif PLATFORM == "linux":
-    if get_wget() == "wget2":
-        WGET = "wget2"
-    else:
-        WGET = "wget"
-    # WGET = "wget"
+    # if get_wget() == "wget2":
+    #     WGET = "wget2"
+    # else:
+    #     WGET = "wget"
+    WGET = "wget"
 
 
 APP_TITLE: str = "WebAppReader"

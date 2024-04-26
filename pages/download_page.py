@@ -275,7 +275,10 @@ class DownloadPage(QWidget):
         self.command = self.command_default.copy()
 
         if self.no_parents:
-            self.command.insert(4, "-np")
+            if WGET == "wget2":
+                self.command.insert(4, "--parent=off")
+            else:
+                self.command.insert(4, "-np")
         self.path_text = self.path_line_edit.text() or HOME_DIRECTORY
         settings.setValue("Paths/download_path", self.path_text)
         self.command.append("-P")

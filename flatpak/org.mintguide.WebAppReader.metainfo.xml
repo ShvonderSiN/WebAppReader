@@ -57,11 +57,12 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.2.5" date="2024-04-11">
+        <release version="1.2.6" date="2024-04-26">
             <description>
-                <p>Fixed a change in the case of the source link, sometimes the source site gave 404</p>
+                <p>Return to using wget2. Fixed some logical actions.</p>
             </description>
         </release>
+        <release version="1.2.5" date="2024-04-11"/>
         <release version="1.2.2" date="2024-03-31"/>
         <release version="1.2.0" date="2024-03-31"/>
         <release version="1.1.0" date="2024-03-12"/>

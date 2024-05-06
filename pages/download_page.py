@@ -204,7 +204,7 @@ class DownloadPage(QWidget):
         if WGET == "wget2":
             self.command_default = [
                 WGET,
-                "-r",
+                "-m",
                 "-k",
                 "-p",
                 "--limit-rate=1500K",
@@ -218,11 +218,13 @@ class DownloadPage(QWidget):
         else:
             self.command_default = [
                 WGET,
-                "-r",
+                "-m",
                 "-k",
-                "--limit-rate=1500K",
+                "-x",
+                "--limit-rate=150K",
                 "-p",
                 "-E",
+                "--level=inf",
                 "--restrict-file-names=windows",
                 "-nc",
                 "--no-check-certificate",

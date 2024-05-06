@@ -7,6 +7,8 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QWidget,
+    QLabel,
+    QMainWindow,
 )
 
 from constants import *
@@ -18,7 +20,7 @@ class TopUi(QWidget):
     go_to_download_page_signal = pyqtSignal(int)
     on_top_signal = pyqtSignal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QMainWindow = None):
         super().__init__(parent=parent)
         self.main = parent
         layout = QHBoxLayout(self)
@@ -40,6 +42,7 @@ class TopUi(QWidget):
         btn_download_site.clicked.connect(
             lambda: self.go_to_download_page_signal.emit(self.PAGES.DOWNLOAD_PAGE)
         )
+
         for widget, icon in zip(
             [btn_add_source, btn_download_site], [add_site_icon, download_site_icon]
         ):
@@ -52,8 +55,12 @@ class TopUi(QWidget):
         spacer = QSpacerItem(
             10, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
+        self.path_viewer = QLabel("Path viewer")
+        self.path_viewer.hide()
+        self.path_viewer.setText("Path viewer")
 
         layout.addItem(spacer)
+        layout.addWidget(self.path_viewer)
 
         self.on_top_checkbox = QCheckBox(text="ON TOP")
         self.on_top_checkbox.setToolTip("Keep window on top".upper())

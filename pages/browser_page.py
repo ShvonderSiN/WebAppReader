@@ -74,7 +74,7 @@ class Browser(QWidget):
     Класс браузера просмотрщика веб-страниц.
     """
 
-    def __init__(self, parent=None, url="https://google.com"):
+    def __init__(self, parent: QWidget = None, url="https://google.com"):
         super().__init__(parent=parent)
         self.url = url
         self.old_page = None
@@ -118,7 +118,8 @@ class Browser(QWidget):
         layout.addWidget(self.bottom_menu)
         layout.setStretch(0, 1)
 
-        self.__signals()
+        # self.__signals()
+
         self.set_url(url=self.url)
 
     def __signals(self):
@@ -126,9 +127,6 @@ class Browser(QWidget):
         self.bottom_menu.search_widget.previous_search_signal.connect(self.find_prev)
         self.bottom_menu.search_widget.perform_search_signal.connect(
             self.perform_search
-        )
-        self.browser.page().fullScreenRequested.connect(
-            self.handle_full_screen_requested
         )
 
     def handle_full_screen_requested(self, request):
@@ -156,6 +154,8 @@ class Browser(QWidget):
 
     def set_url(self, url) -> None:
         new_page = AdBlockingWebEnginePage(self.profile, self.browser)
+        new_page.loadFinished.connect(self.__path_viewer_handler)
+        new_page.fullScreenRequested.connect(self.handle_full_screen_requested)
 
         if self.old_page:
             self.browser.setPage(new_page)
@@ -181,6 +181,12 @@ class Browser(QWidget):
             and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
         ):
             self.bottom_menu.search_box_activate()
+
+    def __path_viewer_handler(self):
+        path = Path(self.browser.url().toString()).parts[-2:]
+        if path:
+            new_path = "/".join(path)
+            self.main_page.main.top_ui.path_viewer.setText(new_path)
 
     def __str__(self):
         return "browser"

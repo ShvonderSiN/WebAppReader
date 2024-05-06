@@ -242,7 +242,6 @@ class MainWindow(QMainWindow):
 
     @QtCore.pyqtSlot(bool, name="on_top")
     def on_top(self, state: bool) -> None:
-        self.CURRENT_PAGE = self.stacked_widget.currentIndex()
         """
         Set the window to be always on top or not based on the given state.
 
@@ -283,6 +282,12 @@ class MainWindow(QMainWindow):
         if not self.active_threads:
             self.download_page.update_download_info(COPYRIGHTS)
 
+        # Show or hide the path viewer
+        if page != self.PAGES.BROWSER_PAGE:
+            self.top_ui.path_viewer.hide()
+        else:
+            self.top_ui.path_viewer.show()
+
     @QtCore.pyqtSlot(name="go_back")
     def go_back(self) -> None:
         """Go back to the previous page."""
@@ -295,6 +300,7 @@ class MainWindow(QMainWindow):
             self.stacked_widget.setCurrentIndex(self.PAGES.MAIN_PAGE)
         if not self.active_threads:
             self.download_page.update_download_info(COPYRIGHTS)
+        self.top_ui.path_viewer.hide()
 
     @QtCore.pyqtSlot(name="exit")
     def exit(self):
@@ -362,5 +368,5 @@ if __name__ == "__main__":
 
     # TODO Сделать ограничение скорости, выбор для пользователя
     # TODO Сделать возможность органичения выхода в интернет (только оффлайн)
-    # TODO Сделать сверху путь просматриваемого файла
+
     # TODO Сделать запоминание страницы каждого сайта, чтобы начинать с него при перезапуске сайта

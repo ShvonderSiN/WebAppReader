@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QToolBox,
     QVBoxLayout,
     QWidget,
+    QMainWindow,
 )
 
 from constants import *
@@ -23,7 +24,7 @@ from ui.row_widget import RowWidget
 class MainWidget(QWidget):
     """Виджет каталога"""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QMainWindow = None):
         super().__init__(parent=parent)
         self.main = parent
         self.browser = Browser(self, url="")

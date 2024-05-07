@@ -170,7 +170,8 @@ class MainWidget(QWidget):
         """
         site = get_single_website(site_id=site_id)
         home_url = site.url
-
+        if self.browser is None:
+            self.browser = Browser(self)
         # тут надо проверить существует ли по пути локальному файл
         if not validate_url(home_url):
 
@@ -213,6 +214,7 @@ class MainWidget(QWidget):
         Close the browser widget.
         """
         self.main.go_back()
+        self.browser.set_url("")
         self.browser.hide()
 
     def __str__(self):

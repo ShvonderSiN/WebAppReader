@@ -1,3 +1,4 @@
+from ast import Str
 import os
 from pathlib import Path
 
@@ -74,7 +75,7 @@ class Browser(QWidget):
     Класс браузера просмотрщика веб-страниц.
     """
 
-    def __init__(self, parent: QWidget = None, url="https://google.com"):
+    def __init__(self, parent: QWidget = None, url=""):
         super().__init__(parent=parent)
         self.url = url
         self.home = url
@@ -198,6 +199,8 @@ class Browser(QWidget):
             self.bottom_menu.search_box_activate()
 
     def __new_path(self, original_path) -> str:
+        if not original_path:
+            return str()
         path = Path(original_path).parts[-3:]
         if path:
             if "http" in path[0]:
@@ -212,6 +215,7 @@ class Browser(QWidget):
             if (
                 settings.value(f"Browser_last_path/{str(self.site_id)}")
                 != original_path
+                and not "" == original_path
             ):
 
                 if not "blank" in original_path:

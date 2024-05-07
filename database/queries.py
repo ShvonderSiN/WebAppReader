@@ -6,6 +6,7 @@ from sqlalchemy.orm import joinedload
 from database.database import session
 from database.models import Category, Website
 
+
 NO_CATEGORY_ID = 1
 
 
@@ -57,11 +58,7 @@ def get_single_website(site_id: int) -> Any | None:
         raise ValueError(f"Error retrieving website id: {e}")
 
 
-def submit_new_website(
-        title: str,
-        url: str,
-        icon: str,
-        category: str | None = None):
+def submit_new_website(title: str, url: str, icon: str, category: str | None = None):
     """
     Submits a new website to the database.
 
@@ -94,11 +91,8 @@ def submit_new_website(
 
 
 def update_single_website(
-        site_id: int,
-        title: str,
-        url: str,
-        icon: str,
-        category: str | None = None):
+    site_id: int, title: str, url: str, icon: str, category: str | None = None
+):
     """
     Updates a single website in the database with the given information.
 
@@ -126,7 +120,9 @@ def update_single_website(
             db_site.title = title
             db_site.url = url
             db_site.icon = icon
-            db_site.category = db_category or session.query(Category).filter_by(id=1).first()
+            db_site.category = (
+                db_category or session.query(Category).filter_by(id=1).first()
+            )
             session.commit()
             return db_site
     except Exception as e:
@@ -209,7 +205,7 @@ def delete_category(category_title: str) -> None:
         raise ValueError(f"Error deleting category: {e}")
 
 
-def delete_website(site_id: int) -> Website:
+def delete_website(site_id: int) -> Website | None:
     try:
         with session:
             db_site = session.query(Website).filter_by(id=site_id).first()
@@ -218,4 +214,4 @@ def delete_website(site_id: int) -> Website:
             return db_site
     except Exception as e:
         session.rollback()
-        raise ValueError(f"Error deleting website: {e}")
+        return None

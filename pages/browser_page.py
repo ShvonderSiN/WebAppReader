@@ -11,7 +11,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
 from constants import APP_TITLE, EASY_LIST
-from settings import app_data_path
+from settings import app_data_path, settings
 from ui.browser_bottom_menu import BottomBrowserMenu
 
 
@@ -77,35 +77,38 @@ class Browser(QWidget):
     def __init__(self, parent: QWidget = None, url="https://google.com"):
         super().__init__(parent=parent)
         self.url = url
+        self.home = url
+        self.site_id = None
         self.old_page = None
         self.main_page = parent
 
         self.browser = MyWebEngineView(self)
+        self.browser.showMaximized()
 
         self.profile = QWebEngineProfile("myProfile", self)
         profile_path = Path(app_data_path) / APP_TITLE / "myProfile"
         profile_path.mkdir(parents=True, exist_ok=True)
         self.profile.setPersistentStoragePath(str(profile_path))
 
-        settings = self.browser.page().settings()
-        settings.setAttribute(
+        set_ = self.browser.page().settings()
+        set_.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
         )
-        settings.setAttribute(
+        set_.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
         )
-        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
-        settings.setAttribute(
+        set_.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        set_.setAttribute(
             QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True
         )
-        settings.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
+        set_.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
+        set_.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
         # settings.setAttribute(QWebEngineCookieStore.loadAllCookies, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
-        settings.setAttribute(
+        set_.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
+        set_.setAttribute(
             QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True
         )
-        settings.setAttribute(
+        set_.setAttribute(
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
 
@@ -118,8 +121,7 @@ class Browser(QWidget):
         layout.addWidget(self.bottom_menu)
         layout.setStretch(0, 1)
 
-        # self.__signals()
-
+        self.__signals()
         self.set_url(url=self.url)
 
     def __signals(self):
@@ -129,12 +131,15 @@ class Browser(QWidget):
             self.perform_search
         )
 
-    def handle_full_screen_requested(self, request):
+    def __handle_full_screen_requested(self, request):
+        print("Handle full screen requested")  # Отладочный вывод
         if request.toggleOn():
-            self.showFullScreen()  # Переход в полноэкранный режим
+            self.main_page.showFullScreen()
+            self.browser.page().showFullScreen()  # Переход в полноэкранный режим
             request.accept()
+            print("full screen")
         else:
-            self.showNormal()  # Возврат к обычному режиму
+            self.browser.page().showNormal()  # Возврат к обычному режиму
             request.accept()
 
     @QtCore.pyqtSlot(str, name="perform_search")
@@ -152,10 +157,12 @@ class Browser(QWidget):
             QWebEnginePage.FindFlag.FindBackward,
         )
 
-    def set_url(self, url) -> None:
+    def set_url(self, url, site_id: int = None, home_page: str = "") -> None:
+        self.site_id = site_id
+
         new_page = AdBlockingWebEnginePage(self.profile, self.browser)
         new_page.loadFinished.connect(self.__path_viewer_handler)
-        new_page.fullScreenRequested.connect(self.handle_full_screen_requested)
+        new_page.fullScreenRequested.connect(self.__handle_full_screen_requested)
 
         if self.old_page:
             self.browser.setPage(new_page)
@@ -171,9 +178,17 @@ class Browser(QWidget):
             self.url = url
             self.browser.setUrl(QtCore.QUrl(url))
         self.bottom_menu.search_box_activate(exit_=True)
+        if home_page:
+            self.home = home_page
+        self.main_page.main.top_ui.path_viewer.setText(
+            self.__new_path(self.browser.url().toString())
+        )
 
     def go_home(self) -> None:
-        self.browser.setUrl(QtCore.QUrl(self.url))
+        if self.home:
+            self.browser.setUrl(QtCore.QUrl(self.home))
+        else:
+            self.browser.setUrl(QtCore.QUrl(self.url))
 
     def keyPressEvent(self, event):
         if (
@@ -182,11 +197,33 @@ class Browser(QWidget):
         ):
             self.bottom_menu.search_box_activate()
 
-    def __path_viewer_handler(self):
-        path = Path(self.browser.url().toString()).parts[-2:]
+    def __new_path(self, original_path) -> str:
+        path = Path(original_path).parts[-3:]
         if path:
-            new_path = "/".join(path)
-            self.main_page.main.top_ui.path_viewer.setText(new_path)
+            if "http" in path[0]:
+                new_path = "/".join(path[1:])
+            else:
+                new_path = "/".join(path)
+        return new_path
+
+    def __path_viewer_handler(self):
+        original_path = self.browser.url().toString()
+        if settings.contains(f"Browser_last_path/{str(self.site_id)}"):
+            if (
+                settings.value(f"Browser_last_path/{str(self.site_id)}")
+                != original_path
+            ):
+
+                if not "blank" in original_path:
+                    settings.setValue(
+                        f"Browser_last_path/{str(self.site_id)}",
+                        self.browser.url().toString(),
+                    )
+                new_path = self.__new_path(original_path)
+                self.main_page.main.top_ui.path_viewer.setText(new_path)
+
+        else:
+            ...
 
     def __str__(self):
         return "browser"

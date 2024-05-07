@@ -2,9 +2,10 @@ from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QSizePolicy
 
-from constants import *
+from constants import PagesConstants
 from database.queries import delete_website
 from ui.context_menu import ContextMenu
+from settings import settings
 
 
 class RowWidget(QtWidgets.QGroupBox):
@@ -90,7 +91,10 @@ class RowWidget(QtWidgets.QGroupBox):
                 self.parent.main.go_to(self.PAGES.ADD_EDIT_PAGE)
             elif action.text() == "DELETE":
                 # deleted_site = delete_website(self.id)
-                delete_website(self.id)
+                result = delete_website(self.id)
+                if result:
+                    settings.remove(f"Browser_last_path/{str(self.id)}")
+                    settings.remove(f"Browser_last_path/{str(self.id)}_home")
                 # delete_icon(deleted_site.icon)
                 # delete_data_from_website(deleted_site.url)
                 self.parent.show_all_websites()

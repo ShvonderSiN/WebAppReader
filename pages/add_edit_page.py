@@ -315,6 +315,12 @@ class AddEditPage(QWidget):
         )
         return re.match(regex, url) is not None
 
+    @staticmethod
+    def __shorten_directory_name(name, max_length=120):
+        if len(name) > max_length:
+            name = name[:max_length]
+        return name + "..."
+
     def __validate_field(self):
         """
         Validates the field inputs by checking if the title text
@@ -322,6 +328,7 @@ class AddEditPage(QWidget):
         """
         title_text = self.title_line_edit.text()
         path_text = self.path_line_edit.text()
+        print(path_text, Path(path_text).parts)
 
         if title_text and is_html_source(path_text):
             self.dialog_box.save_button.setEnabled(True)
@@ -338,7 +345,8 @@ class AddEditPage(QWidget):
                         Path(settings.app_data_path)
                         / APP_TITLE
                         / "icons"
-                        / "_".join(title.lower().split())
+                        # / "_".join(title[:50].lower().split())
+                        / Path(path_text).parts[1]
                     )
                     save_dir.mkdir(parents=True, exist_ok=True)
                     saved_icon_path = download_and_save_icon(icon, save_dir)

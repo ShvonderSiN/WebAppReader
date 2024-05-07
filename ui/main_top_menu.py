@@ -55,9 +55,8 @@ class TopUi(QWidget):
         spacer = QSpacerItem(
             10, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
-        self.path_viewer = QLabel("Path viewer")
+        self.path_viewer = QLabel()
         self.path_viewer.hide()
-        self.path_viewer.setText("Path viewer")
 
         layout.addItem(spacer)
         layout.addWidget(self.path_viewer)

@@ -1,4 +1,6 @@
 from collections import defaultdict
+import os
+from pathlib import Path
 
 from PyQt6 import QtCore
 from PyQt6.QtGui import QPixmap
@@ -13,12 +15,21 @@ from PyQt6.QtWidgets import (
     QMainWindow,
 )
 
-from constants import *
+from constants import (
+    SOURCES_FOLDER,
+    PagesConstants,
+    PLATFORM,
+    COPYRIGHTS,
+    BASE_DIR,
+    SOURCES_FOLDER,
+    NO_IMAGE,
+)
 from database.queries import get_all_websites, get_single_website
 from pages.browser_page import Browser
-from tools import validate_url
+from tools import validate_url, is_html_source
 from ui.browser_bottom_menu import BottomMainMenu
 from ui.row_widget import RowWidget
+from settings import settings
 
 
 class MainWidget(QWidget):
@@ -27,7 +38,7 @@ class MainWidget(QWidget):
     def __init__(self, parent: QMainWindow = None):
         super().__init__(parent=parent)
         self.main = parent
-        self.browser = Browser(self, url="")
+        self.browser = Browser(self)
         self.browser.hide()
         self.PAGES = PagesConstants()
         self.layout = QVBoxLayout(self)
@@ -158,16 +169,16 @@ class MainWidget(QWidget):
             None
         """
         site = get_single_website(site_id=site_id)
-        url = site.url
+        home_url = site.url
 
         # тут надо проверить существует ли по пути локальному файл
-        if not validate_url(url):
+        if not validate_url(home_url):
 
             if PLATFORM == "linux":
-                name = url.split("/")
+                name = home_url.split("/")
                 new_name = "/" + "/".join((name[-3], name[-2], name[-1]))
             elif PLATFORM == "windows":
-                name = url.split("\\")
+                name = home_url.split("\\")
                 new_name = "\\" + "\\".join((name[-2], name[-1]))
             else:
                 pass
@@ -175,17 +186,33 @@ class MainWidget(QWidget):
 
         else:
             self.PAGES.BROWSER_PAGE = self.main.stacked_widget.addWidget(self.browser)
-            self.browser.set_url(url)
+
+            stored_url = settings.contains(f"Browser_last_path/{str(site_id)}")
+            stored_home = settings.contains(f"Browser_last_path/{str(site_id)}_home")
+            if stored_url and stored_home:
+                stored_url = settings.value(f"Browser_last_path/{str(site_id)}")
+                stored_home = settings.value(f"Browser_last_path/{str(site_id)}_home")
+                self.browser.set_url(stored_url, site_id, home_page=stored_home)
+            else:
+                if os.path.exists(home_url):
+                    home_url = Path(home_url).resolve().as_uri()
+
+                settings.setValue(
+                    f"Browser_last_path/{str(site_id)}_home",
+                    home_url,
+                )
+                settings.setValue(f"Browser_last_path/{str(site_id)}", home_url)
+                print(home_url)
+                self.browser.set_url(home_url, site_id, home_page=home_url)
             self.main.go_to(self.PAGES.BROWSER_PAGE)
             self.browser.show()
             self.main.lower_info_label.setText(COPYRIGHTS)
 
     def close_browser(self) -> None:
         """
-        Close the browser widget and remove it from the stacked widget.
+        Close the browser widget.
         """
         self.main.go_back()
-        self.browser.set_url("")
         self.browser.hide()
 
     def __str__(self):

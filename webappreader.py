@@ -1,4 +1,5 @@
 from threading import Thread
+import os, sys
 
 from PyQt6 import QtCore
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
@@ -15,7 +16,16 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from constants import *
+from constants import (
+    VERSION,
+    BASE_DIR,
+    PagesConstants,
+    COPYRIGHTS,
+    SOURCES_FOLDER,
+    PLATFORM,
+    APP_TITLE,
+    APP_ICON,
+)
 from database.database import startup
 from pages.add_edit_page import AddEditPage
 from pages.download_page import DownloadPage
@@ -368,5 +378,3 @@ if __name__ == "__main__":
 
     # TODO Сделать ограничение скорости, выбор для пользователя
     # TODO Сделать возможность органичения выхода в интернет (только оффлайн)
-
-    # TODO Сделать запоминание страницы каждого сайта, чтобы начинать с него при перезапуске сайта

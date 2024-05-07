@@ -57,11 +57,15 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.2.6" date="2024-04-26">
+        <release version="1.2.9" date="2024-05-07">
             <description>
-                <p>Return to using wget2. Fixed some logical actions.</p>
+                <p>The last viewed page is remembered, when the source is started, the last viewed page will be opened</p>
+                <p>Added the display of part of the path of the open page</p>
+                <p>Fixed some issues in the program</p>
+                <p>Runtime has been updated to version 6.7</p>
             </description>
         </release>
+        <release version="1.2.6" date="2024-04-26"/>
         <release version="1.2.5" date="2024-04-11"/>
         <release version="1.2.2" date="2024-03-31"/>
         <release version="1.2.0" date="2024-03-31"/>

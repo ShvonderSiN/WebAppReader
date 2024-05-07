@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WebAppReader"
-#define MyAppVersion "1.2.6"
+#define MyAppVersion "1.2.9"
 #define MyAppPublisher "Sergei Shekin"
 #define MyAppURL "https://mintguide.org/"
 #define MyAppExeName "webappreader.exe"

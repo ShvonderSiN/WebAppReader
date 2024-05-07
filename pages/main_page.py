@@ -203,7 +203,6 @@ class MainWidget(QWidget):
                     home_url,
                 )
                 settings.setValue(f"Browser_last_path/{str(site_id)}", home_url)
-                print(home_url)
                 self.browser.set_url(home_url, site_id, home_page=home_url)
             self.main.go_to(self.PAGES.BROWSER_PAGE)
             self.browser.show()

@@ -233,22 +233,22 @@ class MainWindow(QMainWindow):
         Returns:
             None
         """
-        if not self.confirm_exit:
-            # Set the current index of the stacked widget to the exit page
-            self.go_to(self.PAGES.EXIT_PAGE)
-            # Ignore the close event
-            event.ignore()
-        else:
-            # Остановка всех активных потоков скачивания перед выходом
-            if self.active_threads:
-                for thread in self.active_threads:
-                    if thread.isRunning():
-                        thread.stop()
-                        thread.wait()
-                self.download_page.activeDownloadThreads.clear()
-            # Accept the close event
-            settings.setValue("Window/geometry_saved", self.saveGeometry())
-            event.accept()
+        # if not self.confirm_exit:
+        #     # Set the current index of the stacked widget to the exit page
+        #     self.go_to(self.PAGES.EXIT_PAGE)
+        #     # Ignore the close event
+        #     event.ignore()
+        # else:
+        # Остановка всех активных потоков скачивания перед выходом
+        if self.active_threads:
+            for thread in self.active_threads:
+                if thread.isRunning():
+                    thread.stop()
+                    thread.wait()
+            self.download_page.activeDownloadThreads.clear()
+        # Accept the close event
+        settings.setValue("Window/geometry_saved", self.saveGeometry())
+        event.accept()
 
     @QtCore.pyqtSlot(bool, name="on_top")
     def on_top(self, state: bool) -> None:
@@ -316,6 +316,7 @@ class MainWindow(QMainWindow):
     def exit(self):
         self.confirm_exit = True
         self.close()
+        sys.exit(0)
 
 
 if __name__ == "__main__":
@@ -378,3 +379,4 @@ if __name__ == "__main__":
 
     # TODO Сделать ограничение скорости, выбор для пользователя
     # TODO Сделать возможность органичения выхода в интернет (только оффлайн)
+    # TODO сделать в классах slots для экономии памяти только там, гдне не меняются переменные

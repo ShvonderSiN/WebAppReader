@@ -1,5 +1,6 @@
+import os
+import sys
 from threading import Thread
-import os, sys
 
 from PyQt6 import QtCore
 from PyQt6.QtGui import QAction, QColor, QIcon, QPalette
@@ -116,7 +117,6 @@ class MainWindow(QMainWindow):
         # self.__system_tray()
 
     def __system_tray(self):
-
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(os.path.join(BASE_DIR, SOURCES_FOLDER, self.icon)))
         # контекстное меню для иконки трея
@@ -147,7 +147,6 @@ class MainWindow(QMainWindow):
             self.tray_icon.show()
 
     def __style_ui(self):
-
         # Установка минимального размера окна
         if settings.contains("Window/minimumSize"):
             self.setMinimumSize(settings.value("Window/minimumSize"))
@@ -320,7 +319,6 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-
     if "FLATPAK_ID" not in os.environ:
         version_file()
 
@@ -374,9 +372,8 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 
     # TODO Мобильный сделать без рамки
-    # TODO Мобильный сделать без on_top
     # TODO Мобильный сделать кнопку закрытия программы
 
     # TODO Сделать ограничение скорости, выбор для пользователя
     # TODO Сделать возможность органичения выхода в интернет (только оффлайн)
-    # TODO сделать в классах slots для экономии памяти только там, гдне не меняются переменные
+    # TODO сделать в классах slots для экономии памяти только там, где не меняются переменные

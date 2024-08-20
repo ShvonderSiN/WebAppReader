@@ -77,7 +77,7 @@ class TopUi(QWidget):
                                                 """
             )
 
-            layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
+            # layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
             # TODO следить за обновлениями pyqt6 может пофиксят
         # if CAN_DOWNLOAD is False:
         #     btn_download_site.hide()

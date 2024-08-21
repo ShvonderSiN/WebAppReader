@@ -1,4 +1,3 @@
-from ast import Str
 import os
 from pathlib import Path
 
@@ -34,6 +33,8 @@ class AdBlockingWebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if url.host() in self.your_blocked_domains_list:
             return False  # Блокировать запрос
+        if not url.isLocalFile():
+            return False  # Блокировать запрос, если это не локальный файл
         return True  # Продолжить загрузку страницы
 
 
@@ -91,27 +92,33 @@ class Browser(QWidget):
         profile_path.mkdir(parents=True, exist_ok=True)
         self.profile.setPersistentStoragePath(str(profile_path))
 
-        set_ = self.browser.page().settings()
-        set_.setAttribute(
+        self.set_ = self.browser.page().settings()
+        self.set_.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, False
         )
-        set_.setAttribute(
+        self.set_.setAttribute(
             QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard, False
         )
-        set_.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
-        set_.setAttribute(
+        self.set_.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        self.set_.setAttribute(
             QWebEngineSettings.WebAttribute.Accelerated2dCanvasEnabled, True
         )
-        set_.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
-        set_.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
+        self.set_.setAttribute(QWebEngineSettings.WebAttribute.WebGLEnabled, True)
+        self.set_.setAttribute(QWebEngineSettings.WebAttribute.PdfViewerEnabled, True)
         # settings.setAttribute(QWebEngineCookieStore.loadAllCookies, True)
-        set_.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
-        set_.setAttribute(
+        self.set_.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalStorageEnabled, True
+        )
+        self.set_.setAttribute(
             QWebEngineSettings.WebAttribute.FullScreenSupportEnabled, True
         )
-        set_.setAttribute(
+        self.set_.setAttribute(
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
+        self.set_.setAttribute(
+            QWebEngineSettings.WebAttribute.ScrollAnimatorEnabled, True
+        )
+        # self.disconnect(state=True)
 
         self.old_page = None
 

@@ -328,7 +328,6 @@ class AddEditPage(QWidget):
         """
         title_text = self.title_line_edit.text()
         path_text = self.path_line_edit.text()
-        print(path_text, Path(path_text).parts)
 
         if title_text and is_html_source(path_text):
             self.dialog_box.save_button.setEnabled(True)

@@ -258,11 +258,18 @@ class MainWindow(QMainWindow):
             state (bool): Whether the window should be on top or not.
         """
         if state:
-            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, True)
+            self.setWindowFlag(
+                QtCore.Qt.WindowType.WindowStaysOnTopHint,
+                True,
+            )
         else:
-            self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, False)
+            self.setWindowFlag(
+                QtCore.Qt.WindowType.WindowStaysOnTopHint,
+                False,
+            )
         # self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, True)
         self.show()
+        self.raise_()
 
     @property
     def active_threads(self) -> list[Thread] | None:
@@ -326,10 +333,11 @@ if __name__ == "__main__":
         try:
             from ctypes import windll  # Only exists on Windows.
 
-            myappid = f"org.mintguide.WebbAppReader.{VERSION}"
+            myappid: str = f"org.mintguide.WebbAppReader.{VERSION}"
             windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         except ImportError:
-            pass
+            windll = None
+            ...
 
     startup()
 

@@ -12,7 +12,9 @@ from PyQt6.QtWidgets import (
 )
 
 from constants import *
-from tools import is_wayland
+
+
+# from tools import is_wayland
 
 
 class TopUi(QWidget):
@@ -78,6 +80,14 @@ class TopUi(QWidget):
             )
 
             # layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
+            (
+                layout.addWidget(self.on_top_checkbox)
+                if PLATFORM
+                not in [
+                    "linux",
+                ]
+                else None
+            )
             # TODO следить за обновлениями pyqt6 может пофиксят
         # if CAN_DOWNLOAD is False:
         #     btn_download_site.hide()

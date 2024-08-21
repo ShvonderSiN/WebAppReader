@@ -16,6 +16,8 @@ from ui.browser_bottom_menu import BottomBrowserMenu
 
 
 class AdBlockingWebEnginePage(QWebEnginePage):
+    OFFLINE: bool = True
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.your_blocked_domains_list = self._get_blocked_domains_list()
@@ -33,6 +35,8 @@ class AdBlockingWebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if url.host() in self.your_blocked_domains_list:
             return False  # Блокировать запрос
+        if not AdBlockingWebEnginePage.OFFLINE:
+            return True  # Продолжить загрузку страницы
         if not url.isLocalFile():
             return False  # Блокировать запрос, если это не локальный файл
         return True  # Продолжить загрузку страницы
@@ -78,11 +82,15 @@ class Browser(QWidget):
 
     def __init__(self, parent: QWidget = None, url=""):
         super().__init__(parent=parent)
+
         self.url = url
         self.home = url
         self.site_id = None
         self.old_page = None
         self.main_page = parent
+        AdBlockingWebEnginePage.OFFLINE = (
+            self.main_page.main.top_ui.offline_checkbox.isChecked()
+        )
 
         self.browser = MyWebEngineView(self)
         self.browser.showMaximized()
@@ -121,6 +129,7 @@ class Browser(QWidget):
         # self.disconnect(state=True)
 
         self.old_page = None
+        self.new_page = None
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -138,14 +147,19 @@ class Browser(QWidget):
         self.bottom_menu.search_widget.perform_search_signal.connect(
             self.perform_search
         )
+        self.main_page.main.top_ui.offline_signal.connect(self.isOffline)
+
+    @QtCore.pyqtSlot(bool, name="offline_signal")
+    def isOffline(self):
+        AdBlockingWebEnginePage.OFFLINE = (
+            self.main_page.main.top_ui.offline_checkbox.isChecked()
+        )
 
     def __handle_full_screen_requested(self, request):
-        print("Handle full screen requested")  # Отладочный вывод
         if request.toggleOn():
             self.main_page.showFullScreen()
             self.browser.page().showFullScreen()  # Переход в полноэкранный режим
             request.accept()
-            print("full screen")
         else:
             self.browser.page().showNormal()  # Возврат к обычному режиму
             request.accept()
@@ -168,16 +182,16 @@ class Browser(QWidget):
     def set_url(self, url, site_id: int = None, home_page: str = "") -> None:
         self.site_id = site_id
 
-        new_page = AdBlockingWebEnginePage(self.profile, self.browser)
-        new_page.loadFinished.connect(self.__path_viewer_handler)
-        new_page.fullScreenRequested.connect(self.__handle_full_screen_requested)
+        self.new_page = AdBlockingWebEnginePage(self.profile, self.browser)
+        self.new_page.loadFinished.connect(self.__path_viewer_handler)
+        self.new_page.fullScreenRequested.connect(self.__handle_full_screen_requested)
 
         if self.old_page:
-            self.browser.setPage(new_page)
+            self.browser.setPage(self.new_page)
             self.old_page.deleteLater()
             self.old_page = None
 
-        self.old_page = new_page
+        self.old_page = self.new_page
         if os.path.isfile(url):
             path = Path(url).resolve()
             self.url = path.as_uri()

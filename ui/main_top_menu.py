@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 
 from constants import *
+from settings import settings
 
 
 # from tools import is_wayland
@@ -21,6 +22,7 @@ class TopUi(QWidget):
     go_to_add_page_signal = pyqtSignal(int)
     go_to_download_page_signal = pyqtSignal(int)
     on_top_signal = pyqtSignal(bool)
+    offline_signal = pyqtSignal(bool)
 
     def __init__(self, parent: QMainWindow = None):
         super().__init__(parent=parent)
@@ -63,32 +65,28 @@ class TopUi(QWidget):
         layout.addItem(spacer)
         layout.addWidget(self.path_viewer)
 
-        self.on_top_checkbox = QCheckBox(text="ON TOP")
-        self.on_top_checkbox.setToolTip("Keep window on top".upper())
-        if PLATFORM in ["windows", "linux"]:
-            # self.on_top_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-            self.on_top_checkbox.stateChanged.connect(self.on_checkbox_state_changed)
-
-            self.on_top_checkbox.setStyleSheet(
-                f"""
+        self.on_top_checkbox = self.on_top_checkbox()
+        self.offline_checkbox = self.offline_checkbox()
+        CHECKBOX_STYLESHEET = f"""
                                                 QCheckBox::indicator {{
                                                     width: {btn_add_source.size().width() / 2}px;
                                                     height: {btn_add_source.size().height() / 2}px;
                                                     background-color: none;
                                                                     }}
                                                 """
-            )
-
-            # layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
-            (
-                layout.addWidget(self.on_top_checkbox)
-                if PLATFORM
-                not in [
-                    "linux",
-                ]
-                else None
-            )
-            # TODO следить за обновлениями pyqt6 может пофиксят
+        self.on_top_checkbox.setStyleSheet(CHECKBOX_STYLESHEET)
+        self.offline_checkbox.setStyleSheet(CHECKBOX_STYLESHEET)
+        # layout.addWidget(self.on_top_checkbox) if not is_wayland() else None
+        (
+            layout.addWidget(self.on_top_checkbox)
+            if PLATFORM
+            not in [
+                "linux",
+            ]
+            else None
+        )
+        layout.addWidget(self.offline_checkbox)
+        # TODO следить за обновлениями pyqt6 может пофиксят
         # if CAN_DOWNLOAD is False:
         #     btn_download_site.hide()
 
@@ -99,3 +97,43 @@ class TopUi(QWidget):
         else:
             # self.main.on_top(False)
             self.on_top_signal.emit(False)
+
+    def on_checkbox_offline_changed(self, state):
+        if state:
+            self.offline_signal.emit(True)
+            self.offline_checkbox.setText("OFFLINE")
+            self.offline_checkbox.setToolTip("Can't view remotes".upper())
+            settings.setValue("Browser/offline", 1)
+        else:
+            self.offline_signal.emit(False)
+            self.offline_checkbox.setText("ONLINE")
+            self.offline_checkbox.setToolTip("Can view remotes".upper())
+            settings.setValue("Browser/offline", 0)
+
+    def on_top_checkbox(self) -> QCheckBox:
+        on_top_checkbox = QCheckBox(text="ON TOP")
+        on_top_checkbox.setToolTip("Keep window on top".upper())
+        # self.on_top_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        on_top_checkbox.stateChanged.connect(self.on_checkbox_state_changed)
+        return on_top_checkbox
+
+    def offline_checkbox(self) -> QCheckBox:
+        offline_checkbox = QCheckBox()
+
+        if settings.value("Browser/offline") == "1" or not settings.contains(
+            "Browser/offline"
+        ):
+            offline_checkbox.setText("OFFLINE")
+            offline_checkbox.setToolTip("Can't view remotes".upper())
+            offline_checkbox.setChecked(True)
+        else:
+            offline_checkbox.setText("ONLINE")
+            offline_checkbox.setToolTip("Can view remotes".upper())
+            offline_checkbox.setChecked(False)
+        # self.on_top_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        offline_checkbox.stateChanged.connect(self.on_checkbox_offline_changed)
+        return offline_checkbox
+
+    def set_path_viewer(self, path: str):
+        self.path_viewer.setText(path)
+        self.path_viewer.show()

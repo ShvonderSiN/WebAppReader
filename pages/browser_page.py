@@ -50,7 +50,7 @@ class AdBlockingWebEnginePage(QWebEnginePage):
             response.raise_for_status()  # Если статус не 200, то исключение
 
             # Сохраняем файл
-            with open(path, "w") as file:
+            with open(path, "w", encoding="utf-8") as file:
                 file.write(response.text)
 
         except requests.exceptions.RequestException:

@@ -1,3 +1,8 @@
+import os
+import re
+from pathlib import Path
+
+import requests
 from PyQt6 import QtCore
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QIcon, QPixmap
@@ -7,12 +12,24 @@ from PyQt6.QtWidgets import (
     QFormLayout,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
-import settings
+from constants import (
+    ADD_NEW_CATEGORY_TEXT,
+    APP_DATA_FOLDER,
+    APP_TITLE,
+    BASE_DIR,
+    COPYRIGHTS,
+    NO_IMAGE,
+    OPEN_FILE_ICON,
+    PagesConstants,
+    REMOVE_ICON,
+    SOURCES_FOLDER,
+)
 from database.queries import (
     delete_category,
     get_categories,
@@ -20,7 +37,7 @@ from database.queries import (
     submit_new_website,
     update_single_website,
 )
-from tools import *
+from tools import download_and_save_icon, get_new_title_icon, is_html_source
 from ui.base_dialog_save import BaseDialogSave
 
 HEIGHT = 35
@@ -341,7 +358,7 @@ class AddEditPage(QWidget):
                 self.title_line_edit.setText(title)
                 if icon.startswith("http"):
                     save_dir = (
-                        Path(settings.app_data_path)
+                        Path(APP_DATA_FOLDER)
                         / APP_TITLE
                         / "icons"
                         # / "_".join(title[:50].lower().split())

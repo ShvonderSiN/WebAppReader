@@ -12,8 +12,8 @@ from PyQt6.QtWebEngineCore import (
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
-from constants import APP_TITLE, EASY_LIST, EASY_LIST_URL
-from settings import app_data_path, settings
+from constants import APP_DATA_FOLDER, APP_TITLE, EASY_LIST, EASY_LIST_URL
+from settings import settings
 from ui.browser_bottom_menu import BottomBrowserMenu
 
 
@@ -129,7 +129,7 @@ class Browser(QWidget):
         self.browser.showMaximized()
 
         self.profile = QWebEngineProfile("myProfile", self)
-        profile_path = Path(app_data_path) / APP_TITLE / "myProfile"
+        profile_path = Path(APP_DATA_FOLDER) / APP_TITLE / "myProfile"
         profile_path.mkdir(parents=True, exist_ok=True)
         self.profile.setPersistentStoragePath(str(profile_path))
 

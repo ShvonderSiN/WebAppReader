@@ -1,6 +1,6 @@
 import logging
 
-from PyQt6.QtCore import QRect, QSettings, QSize, QStandardPaths
+from PyQt6.QtCore import QRect, QSettings, QSize
 
 from constants import ERROR_LOG
 
@@ -8,9 +8,7 @@ logging.basicConfig(filename=ERROR_LOG, level=logging.ERROR)
 
 
 settings = QSettings("WebAppReader", "WebAppReader")
-app_data_path = QStandardPaths.writableLocation(
-    QStandardPaths.StandardLocation.AppDataLocation
-)
+
 
 settings.beginGroup("Window")
 # Установка размера окна по умолчанию

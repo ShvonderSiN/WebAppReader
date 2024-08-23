@@ -86,3 +86,4 @@ old.py
 /.vscode/
 /manifest.json
 wget-log
+/src/easylist.txt

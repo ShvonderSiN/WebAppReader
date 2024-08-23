@@ -18,14 +18,14 @@ from PyQt6.QtWidgets import (
 )
 
 from constants import (
-    VERSION,
-    BASE_DIR,
-    PagesConstants,
-    COPYRIGHTS,
-    SOURCES_FOLDER,
-    PLATFORM,
-    APP_TITLE,
     APP_ICON,
+    APP_TITLE,
+    BASE_DIR,
+    COPYRIGHTS,
+    PLATFORM,
+    PagesConstants,
+    SOURCES_FOLDER,
+    VERSION,
 )
 from database.database import startup
 from pages.add_edit_page import AddEditPage
@@ -61,6 +61,10 @@ def version_file():
 class MainWindow(QMainWindow):
     """Главное окно"""
 
+    GEOMETRY_SAVED: str = "Window/geometry_saved"
+    GEOMETRY: str = "Window/geometry"
+    MINIMUM_SIZE: str = "Window/minimumSize"
+
     def __init__(self, title, icon):
         super().__init__()
         self.title = title
@@ -84,7 +88,9 @@ class MainWindow(QMainWindow):
         self.terminate_btn = QPushButton(text="X")
         self.terminate_btn.hide()
         self.terminate_btn.setStyleSheet(
-            "background-color: white;" "color: red;" "font-weight: bold;"
+            """background-color: white;
+             color: red; 
+             font-weight: bold;"""
         )
         self.terminate_btn.setFixedSize(QtCore.QSize(20, 20))
 
@@ -148,14 +154,14 @@ class MainWindow(QMainWindow):
 
     def __style_ui(self):
         # Установка минимального размера окна
-        if settings.contains("Window/minimumSize"):
-            self.setMinimumSize(settings.value("Window/minimumSize"))
+        if settings.contains(MainWindow.MINIMUM_SIZE):
+            self.setMinimumSize(settings.value(MainWindow.MINIMUM_SIZE))
 
         # Восстановление геометрии окна
-        if settings.contains("Window/geometry_saved"):
-            self.restoreGeometry(settings.value("Window/geometry_saved"))
-        elif settings.contains("Window/geometry"):
-            self.setGeometry(settings.value("Window/geometry"))
+        if settings.contains(MainWindow.GEOMETRY_SAVED):
+            self.restoreGeometry(settings.value(MainWindow.GEOMETRY_SAVED))
+        elif settings.contains(MainWindow.GEOMETRY):
+            self.setGeometry(settings.value(MainWindow.GEOMETRY))
 
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon(os.path.join(BASE_DIR, SOURCES_FOLDER, self.icon)))
@@ -220,7 +226,7 @@ class MainWindow(QMainWindow):
                 if isinstance(widget, RowWidget):
                     # Вызов метода для обновления текста с учетом новой ширины
                     widget.update_text_nameWidget(self.width())
-        settings.setValue("Window/geometry_saved", self.saveGeometry())
+        settings.setValue(MainWindow.GEOMETRY_SAVED, self.saveGeometry())
 
     def closeEvent(self, event) -> None:
         """
@@ -285,24 +291,21 @@ class MainWindow(QMainWindow):
             page (int, None): The index of the page to go to. If None, go to the main_window page.
         """
         self.CURRENT_PAGE = self.stacked_widget.currentIndex()
-        if page is not None and page != self.CURRENT_PAGE:
-            if page != self.PAGES.MAIN_PAGE or (
-                page == self.PAGES.MAIN_PAGE
-                and self.CURRENT_PAGE != self.PAGES.MAIN_PAGE
+        if page and page != self.CURRENT_PAGE:
+            if (
+                page != self.PAGES.MAIN_PAGE
+                or self.CURRENT_PAGE != self.PAGES.MAIN_PAGE
             ):
                 self.page_history.append(self.CURRENT_PAGE)
                 self.PREVIOUS_PAGE = self.CURRENT_PAGE
-        self.stacked_widget.setCurrentIndex(
-            page if page is not None else self.PAGES.MAIN_PAGE
-        )
+            else:
+                self.PREVIOUS_PAGE = None
+        self.stacked_widget.setCurrentIndex(page if page else self.PAGES.MAIN_PAGE)
         if not self.active_threads:
             self.download_page.update_download_info(COPYRIGHTS)
 
         # Show or hide the path viewer
-        if page != self.PAGES.BROWSER_PAGE:
-            self.top_ui.path_viewer.hide()
-        else:
-            self.top_ui.path_viewer.show()
+        self.top_ui.path_viewer.setVisible(page == self.PAGES.BROWSER_PAGE)
 
     @QtCore.pyqtSlot(name="go_back")
     def go_back(self) -> None:

@@ -28,4 +28,4 @@ settings.endGroup()
 
 status = settings.status()
 if status != QSettings.Status.NoError:
-    logging.error(f"Error saving settings", exc_info=False)
+    logging.error("Error saving settings", exc_info=False)

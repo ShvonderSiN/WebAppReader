@@ -223,6 +223,7 @@ class Browser(QWidget):
         if not original_path:
             return str()
         path = Path(original_path).parts[-3:]
+        new_path = str()
         if path:
             if "http" in path[0]:
                 new_path = "/".join(path[1:])
@@ -236,10 +237,10 @@ class Browser(QWidget):
             if (
                 settings.value(f"Browser_last_path/{str(self.site_id)}")
                 != original_path
-                and not "" == original_path
+                and "" != original_path
             ):
 
-                if not "blank" in original_path:
+                if "blank" not in original_path:
                     settings.setValue(
                         f"Browser_last_path/{str(self.site_id)}",
                         self.browser.url().toString(),

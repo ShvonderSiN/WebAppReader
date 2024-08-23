@@ -1,17 +1,27 @@
+import os
+
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QCheckBox,
     QHBoxLayout,
+    QLabel,
+    QMainWindow,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
     QWidget,
-    QLabel,
-    QMainWindow,
 )
 
-from constants import *
+from constants import (
+    ADD_ICON,
+    BASE_DIR,
+    BROWSER_REMOTES,
+    DOWNLOAD_ICON,
+    PLATFORM,
+    PagesConstants,
+    SOURCES_FOLDER,
+)
 from settings import settings
 
 
@@ -23,6 +33,9 @@ class TopUi(QWidget):
     go_to_download_page_signal = pyqtSignal(int)
     on_top_signal = pyqtSignal(bool)
     offline_signal = pyqtSignal(bool)
+
+    NOW_ONLINE: str = "NOW ONLINE"
+    NOW_OFFLINE: str = "NOW OFFLINE"
 
     def __init__(self, parent: QMainWindow = None):
         super().__init__(parent=parent)
@@ -101,14 +114,14 @@ class TopUi(QWidget):
     def on_checkbox_offline_changed(self, state):
         if state:
             self.offline_signal.emit(True)
-            self.offline_checkbox.setText("OFFLINE")
+            self.offline_checkbox.setText(TopUi.NOW_OFFLINE)
             self.offline_checkbox.setToolTip("Can't view remotes".upper())
-            settings.setValue("Browser/offline", 1)
+            settings.setValue(BROWSER_REMOTES, 1)
         else:
             self.offline_signal.emit(False)
-            self.offline_checkbox.setText("ONLINE")
+            self.offline_checkbox.setText(TopUi.NOW_ONLINE)
             self.offline_checkbox.setToolTip("Can view remotes".upper())
-            settings.setValue("Browser/offline", 0)
+            settings.setValue(BROWSER_REMOTES, 0)
 
     def on_top_checkbox(self) -> QCheckBox:
         on_top_checkbox = QCheckBox(text="ON TOP")
@@ -120,14 +133,14 @@ class TopUi(QWidget):
     def offline_checkbox(self) -> QCheckBox:
         offline_checkbox = QCheckBox()
 
-        if settings.value("Browser/offline") == "1" or not settings.contains(
-            "Browser/offline"
+        if settings.value(BROWSER_REMOTES) == "1" or not settings.contains(
+            BROWSER_REMOTES
         ):
-            offline_checkbox.setText("OFFLINE")
+            offline_checkbox.setText(TopUi.NOW_OFFLINE)
             offline_checkbox.setToolTip("Can't view remotes".upper())
             offline_checkbox.setChecked(True)
         else:
-            offline_checkbox.setText("ONLINE")
+            offline_checkbox.setText(TopUi.NOW_ONLINE)
             offline_checkbox.setToolTip("Can view remotes".upper())
             offline_checkbox.setChecked(False)
         # self.on_top_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)

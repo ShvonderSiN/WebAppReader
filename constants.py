@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.2.9"
+VERSION = "1.3.0"
 PLATFORM: str = platform.system().lower()
 
 
@@ -111,3 +111,7 @@ class PagesConstants:
         self.DELETE_PAGE = None
         self.EDIT_SITE_ID = None
         self.DOWNLOAD_PAGE = None
+
+
+#  settings constants
+BROWSER_REMOTES: str = "Browser/offline"

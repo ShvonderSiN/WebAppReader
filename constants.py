@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.3.1"
+VERSION = "1.3.2"
 PLATFORM: str = platform.system().lower()
 
 
@@ -47,6 +47,7 @@ APP_DATA_FOLDER: str = os.path.join(
 ERROR_LOG = os.path.join(APP_DATA_FOLDER, "error_log.txt")
 SOURCES_FOLDER: str = os.path.join(BASE_DIR, "src")
 EASY_LIST: str = os.path.join(BASE_DIR, SOURCES_FOLDER, "easylist.txt")
+EASY_LIST_URL: str = "https://easylist.to/easylist/easylist.txt"
 APP_ICON: str = (
     os.path.join(SOURCES_FOLDER, "logo_128.png")
     if PLATFORM == "linux"

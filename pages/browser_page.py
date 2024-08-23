@@ -1,6 +1,8 @@
 import os
+from datetime import datetime
 from pathlib import Path
 
+import requests
 from PyQt6 import QtCore
 from PyQt6.QtWebEngineCore import (
     QWebEnginePage,
@@ -10,7 +12,7 @@ from PyQt6.QtWebEngineCore import (
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMenu, QVBoxLayout, QWidget
 
-from constants import APP_TITLE, EASY_LIST
+from constants import APP_TITLE, EASY_LIST, EASY_LIST_URL
 from settings import app_data_path, settings
 from ui.browser_bottom_menu import BottomBrowserMenu
 
@@ -20,17 +22,48 @@ class AdBlockingWebEnginePage(QWebEnginePage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.your_blocked_domains_list = self._get_blocked_domains_list()
+        self.your_blocked_domains_list: set = self.use_easy_list() or set()
+
+    def use_easy_list(self):
+        if not os.path.exists(EASY_LIST) or self.check_last_update(EASY_LIST):
+            self.download_file(EASY_LIST_URL, EASY_LIST)
+        return self.open_easy_list_file(EASY_LIST)
 
     @staticmethod
-    def _get_blocked_domains_list():
-        with open(
-            EASY_LIST,
-            "r",
-            encoding="utf-8",
-        ) as f:
-            your_blocked_domains_list = set(f.read().splitlines())
-            return your_blocked_domains_list
+    def open_easy_list_file(file: str) -> set:
+        try:
+            with open(
+                file,
+                "r",
+                encoding="utf-8",
+            ) as f:
+                your_blocked_domains_list = set(f.read().splitlines())
+                return your_blocked_domains_list
+        except FileNotFoundError:
+            return set()
+
+    @staticmethod
+    def download_file(url: str, path: str):
+        try:
+            # Скачиваем файл
+            response = requests.get(url)
+            response.raise_for_status()  # Если статус не 200, то исключение
+
+            # Сохраняем файл
+            with open(path, "w") as file:
+                file.write(response.text)
+
+        except requests.exceptions.RequestException:
+            return
+
+    @staticmethod
+    def check_last_update(file: str) -> bool:
+        if os.path.exists(file):
+            last_update = datetime.fromtimestamp(os.path.getmtime(file))
+            now = datetime.now()
+            if (now - last_update).days >= 1:
+                return True
+        return False
 
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if url.host() in self.your_blocked_domains_list:

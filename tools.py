@@ -1,14 +1,26 @@
+import logging
+import os
 import re
 from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin, urlparse, urlunparse
+from venv import logger
 
 import requests
 from PyQt6.QtWidgets import QLineEdit
 from bs4 import BeautifulSoup
 from fake_headers import Headers
 
-from constants import *
+from constants import (
+    APP_DATA_FOLDER,
+    BASE_DIR,
+    ERROR_LOG,
+    NO_IMAGE,
+    REQUEST_TIMEOUT_HTML,
+    SOURCES_FOLDER,
+)
+
+logging.basicConfig(filename=ERROR_LOG, level=logging.ERROR)
 
 
 class Request:
@@ -54,7 +66,10 @@ class Request:
                     return BeautifulSoup(response.text, "html5lib").prettify()
                 return response.text
         else:
-            print(f"Ответ сервера: {response.status_code}", Request.__name__)
+            logger.error(
+                f"Ответ сервера: {response.status_code}, {validate_url.__name__}",
+                exc_info=False,
+            )
             return None
 
     def __repr__(self):
@@ -86,7 +101,7 @@ def validate_url(url):
         else:
             return False
     except Exception as e:
-        print(f"Error {e}", validate_url.__name__)
+        logger.error(f"Error {e}, {validate_url.__name__}", exc_info=False)
         return False
 
 
@@ -131,7 +146,10 @@ def open_file(path: str) -> str | None:
             #  TODO добавить открытие pdf файлов и возможно картинок шрапгалок
             return file.read()
     except UnicodeDecodeError as er:
-        print(f"UnicodeDecodeError {str(er)} in function: {open_file.__name__}")
+        logging.error(
+            f"UnicodeDecodeError {str(er)} in function: {open_file.__name__}",
+            exc_info=False,
+        )
         return None
 
 

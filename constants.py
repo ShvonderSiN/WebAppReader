@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.3.3"
+VERSION = "1.3.5"
 PLATFORM: str = platform.system().lower()
 
 
@@ -52,7 +52,7 @@ APP_ICON: str = (
     if PLATFORM == "linux"
     else os.path.join(SOURCES_FOLDER, "logo.ico")
 )
-DATA_WEBSITES_FOLDER: str = "websites"
+DATA_WEBSITES_FOLDER: str = os.path.join(APP_DATA_FOLDER, "websites")
 HOME_DIRECTORY = QStandardPaths.writableLocation(
     QStandardPaths.StandardLocation.HomeLocation
 )

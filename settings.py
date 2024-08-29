@@ -7,8 +7,12 @@ from constants import ERROR_LOG
 logging.basicConfig(filename=ERROR_LOG, level=logging.ERROR)
 
 
-settings = QSettings("WebAppReader", "WebAppReader")
+settings = QSettings(
+    "WebAppReader",
+    "WebAppReader",
+)
 
+# settings.setDefaultFormat(QSettings.Format.IniFormat)
 
 settings.beginGroup("Window")
 # Установка размера окна по умолчанию

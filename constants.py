@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.3.5"
+VERSION = "1.3.6"
 PLATFORM: str = platform.system().lower()
 
 
@@ -44,8 +44,15 @@ APP_DATA_FOLDER: str = os.path.join(
     QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation),
     APP_TITLE,
 )
+if not os.path.exists(APP_DATA_FOLDER):
+    os.makedirs(APP_DATA_FOLDER)
+
 ERROR_LOG = os.path.join(APP_DATA_FOLDER, "error_log.txt")
+if os.path.isdir(ERROR_LOG):
+    os.rmdir(ERROR_LOG)
+
 SOURCES_FOLDER: str = os.path.join(BASE_DIR, "src")
+
 
 APP_ICON: str = (
     os.path.join(SOURCES_FOLDER, "logo_128.png")
@@ -53,6 +60,8 @@ APP_ICON: str = (
     else os.path.join(SOURCES_FOLDER, "logo.ico")
 )
 DATA_WEBSITES_FOLDER: str = os.path.join(APP_DATA_FOLDER, "websites")
+if not os.path.exists(DATA_WEBSITES_FOLDER):
+    os.makedirs(DATA_WEBSITES_FOLDER)
 HOME_DIRECTORY = QStandardPaths.writableLocation(
     QStandardPaths.StandardLocation.HomeLocation
 )

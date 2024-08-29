@@ -57,14 +57,14 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
-        <release version="1.2.9" date="2024-05-07">
+        <release version="1.3.6" date="2024-08-29">
             <description>
-                <p>The last viewed page is remembered, when the source is started, the last viewed page will be opened</p>
-                <p>Added the display of part of the path of the open page</p>
+                <p>Added the ability to disable Internet access so that external sources are not loaded</p>
+                <p>Closing the program now does not ask for confirmation</p>
                 <p>Fixed some issues in the program</p>
-                <p>Runtime has been updated to version 6.7</p>
             </description>
         </release>
+        <release version="1.2.9" date="2024-05-07">
         <release version="1.2.6" date="2024-04-26"/>
         <release version="1.2.5" date="2024-04-11"/>
         <release version="1.2.2" date="2024-03-31"/>

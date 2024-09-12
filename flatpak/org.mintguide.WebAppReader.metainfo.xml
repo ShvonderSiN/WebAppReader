@@ -57,6 +57,11 @@
     </provides>
     <content_rating type="oars-1.0"/>
     <releases>
+        <release version="1.3.7" date="2024-09-13">
+            <description>
+                <p>Fixed the display of sources on the main page</p>
+            </description>
+        </release>
         <release version="1.3.6" date="2024-08-29">
             <description>
                 <p>Added the ability to disable Internet access so that external sources are not loaded</p>

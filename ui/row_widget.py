@@ -4,8 +4,8 @@ from PyQt6.QtWidgets import QSizePolicy
 
 from constants import PagesConstants
 from database.queries import delete_website
-from ui.context_menu import ContextMenu
 from settings import settings
+from ui.context_menu import ContextMenu
 
 
 class RowWidget(QtWidgets.QGroupBox):
@@ -26,23 +26,26 @@ class RowWidget(QtWidgets.QGroupBox):
         self.id = id_site
 
         h_box = QtWidgets.QHBoxLayout(self)
-
         self.iconWidget = QtWidgets.QLabel("iconLabel")
         h_box.addWidget(self.iconWidget)
-        self.nameWidget = QtWidgets.QLabel(self.title)
+        self.nameWidget = QtWidgets.QLabel(self.title, parent=self)
         self.nameWidget.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
         self.nameWidget.setAlignment(QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.nameWidget.setMargin(5)
         h_box.addWidget(self.nameWidget, 1)
 
-        h_box.setContentsMargins(0, 0, 0, 0)
         h_box.setSpacing(1)
-        self.setFlat(True)
-        self.setMouseTracking(True)
+        h_box.setContentsMargins(0, 0, 0, 0)
 
-        self.enterEvent = self.enterEvent
-        self.leaveEvent = self.leaveEvent
-        self.contextMenuEvent = self.contextMenuEvent
+        self.setFlat(True)
+        self.setStyleSheet(
+            """
+            QGroupBox {
+                border: none;  /* Корректно убираем границу */
+            }
+            """
+        )
+
         self.mouseDoubleClickEvent = self.double_click_event
 
     def enterEvent(self, event):
@@ -56,7 +59,15 @@ class RowWidget(QtWidgets.QGroupBox):
         Returns:
             None
         """
+
         self.setFlat(False)
+        self.setStyleSheet(
+            """
+            QGroupBox {
+                border: 1px solid #4C4F51;  /* Устанавливаем корректную границу */
+            }
+            """
+        )
 
     def leaveEvent(self, event):
         """
@@ -70,6 +81,13 @@ class RowWidget(QtWidgets.QGroupBox):
             None
         """
         self.setFlat(True)
+        self.setStyleSheet(
+            """
+            QGroupBox {
+                border: none;  /* Корректно убираем границу */
+            }
+            """
+        )
 
     def double_click_event(self, event) -> None:
         """

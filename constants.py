@@ -5,7 +5,7 @@ import sys
 
 from PyQt6.QtCore import QStandardPaths
 
-VERSION = "1.3.6"
+VERSION = "1.3.7"
 PLATFORM: str = platform.system().lower()
 
 
@@ -95,7 +95,7 @@ DOWN_ICON: str = "down.png"
 ADD_NEW_CATEGORY_TEXT = "Add new..."
 NO_CATEGORY_TEXT = "No category"
 
-COPYRIGHTS = "Shekin © 2024, MintGuide.org. All rights reserved."
+COPYRIGHTS = f"Shekin © 2024, MintGuide.org. All rights reserved. v{VERSION}"
 
 
 REQUEST_TIMEOUT_HTML: int = 3
